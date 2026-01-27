@@ -33,9 +33,26 @@ export default function DragDropUpload() {
         return () => clearInterval(interval);
     }, [isAnalyzing]);
 
-    const processFile = useCallback(async (file: File) => {
-        if (file.type !== 'application/pdf') {
-            alert("Only PDFs are supported!");
+    // Helper for Base64 -> Blob
+    const base64ToBlob = (base64: string, type: string) => {
+        const binStr = atob(base64);
+        const len = binStr.length;
+        const arr = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            arr[i] = binStr.charCodeAt(i);
+        }
+        return new Blob([arr], { type: type });
+    };
+
+    const uploadFiles = useCallback(async (files: File[]) => {
+        if (files.length === 0) return;
+
+        // Validation
+        const isPdf = files.length === 1 && files[0].type === 'application/pdf';
+        const areImages = files.every(f => ['image/jpeg', 'image/png', 'image/heic', 'image/jpg'].includes(f.type));
+
+        if (!isPdf && !areImages) {
+            alert("Please upload either a single PDF or a set of Images (JPG/PNG).");
             return;
         }
 
@@ -43,7 +60,7 @@ export default function DragDropUpload() {
         setIsAnalyzing(true);
 
         const formData = new FormData();
-        formData.append('file', file);
+        files.forEach(f => formData.append('file', f));
 
         try {
             // Enforce minimum 3.5s delay for the "cool loader" to be seen
@@ -61,17 +78,29 @@ export default function DragDropUpload() {
             const [_, response] = await Promise.all([minDelayPromise, analysisPromise]);
 
             if (!response.ok) {
-                throw new Error('Analysis failed');
+                const errData = await response.json().catch(() => ({ detail: 'Analysis failed' }));
+                throw new Error(errData.detail || 'Analysis failed');
             }
 
             const data = await response.json();
 
-            // Critical: Set result FIRST, then set file to switch views
+            // Critical: Set result FIRST
             setAnalysisResult(data);
-            setFile(file);
+
+            // Handle File Setting
+            if (data.pdf_base64) {
+                // If backend returned a generated PDF (e.g. from images), use it
+                const blob = base64ToBlob(data.pdf_base64, 'application/pdf');
+                const generatedFile = new File([blob], "scanned_contract.pdf", { type: "application/pdf" });
+                setFile(generatedFile);
+            } else {
+                // Otherwise use the original file (if it was a PDF)
+                setFile(files[0]);
+            }
+
         } catch (error) {
             console.error(error);
-            alert("Error analyzing file. Is the backend running?");
+            alert(`Error analyzing file: ${error instanceof Error ? error.message : "Unknown error"}`);
         } finally {
             setIsAnalyzing(false);
         }
@@ -80,14 +109,14 @@ export default function DragDropUpload() {
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            processFile(e.dataTransfer.files[0]);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            uploadFiles(Array.from(e.dataTransfer.files));
         }
     };
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            processFile(e.target.files[0]);
+        if (e.target.files && e.target.files.length > 0) {
+            uploadFiles(Array.from(e.target.files));
         }
     };
 
@@ -114,7 +143,9 @@ export default function DragDropUpload() {
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/0 via-neutral-900/0 to-neutral-900/50 pointer-events-none" />
                 <input
                     type="file"
-                    accept="application/pdf"
+                    accept="application/pdf, image/png, image/jpeg, image/jpg"
+                    multiple
+                    capture="environment"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
                     onChange={handleFileInput}
                     disabled={isAnalyzing}
@@ -150,7 +181,7 @@ export default function DragDropUpload() {
                                 Upload Contract
                             </h3>
                             <p className="text-neutral-500 text-sm">
-                                PDFs up to 10MB
+                                PDF or Photos (Multiple)
                             </p>
                         </motion.div>
                     )}

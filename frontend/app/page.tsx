@@ -1,12 +1,14 @@
 'use client';
 
-import { useAuditStore } from '@/store/auditStore';
+import { useState } from 'react';
+import { useAuditStore, Trap } from '@/store/auditStore';
 import DragDropUpload from '@/components/DragDropUpload';
 import { clsx } from 'clsx';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ArrowRight, ShieldCheck, Zap, Lock, Search, Scale, FileText, CheckCircle2, AlertTriangle, AlertCircle, Info } from 'lucide-react';
+import { ChevronLeft, ArrowRight, ShieldCheck, Zap, Lock, Search, Scale, FileText, CheckCircle2, AlertTriangle, AlertCircle, Info, Loader2 } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
+import { NegotiationModal } from '@/components/NegotiationModal';
 
 const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
   ssr: false,
@@ -15,6 +17,33 @@ const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
 
 export default function Home() {
   const { file, analysisResult } = useAuditStore();
+  const [negotiationData, setNegotiationData] = useState<{ subject: string, body: string } | null>(null);
+  const [isNegotiating, setIsNegotiating] = useState(false);
+  const [activeTrapId, setActiveTrapId] = useState<number | null>(null);
+
+  const handleNegotiate = async (trap: Trap, index: number) => {
+    setIsNegotiating(true);
+    setActiveTrapId(index);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005';
+      const res = await fetch(`${API_URL}/negotiate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          trap_text: trap.original_text,
+          category: trap.category,
+          explanation: trap.plain_english_explanation
+        })
+      });
+      const data = await res.json();
+      setNegotiationData({ subject: data.subject_line, body: data.email_body });
+    } catch (e) {
+      alert("Failed to generate negotiation script.");
+    } finally {
+      setIsNegotiating(false);
+      setActiveTrapId(null);
+    }
+  };
 
   return (
     <main className="flex min-h-screen w-full flex-col overflow-x-hidden font-sans bg-black selection:bg-white/20 text-white">
@@ -185,49 +214,64 @@ export default function Home() {
                 {!analysisResult ? (
                   <div className="text-neutral-500 animate-pulse font-medium">Processing...</div>
                 ) : (
-                  analysisResult.detected_traps.map((trap, idx) => (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      key={idx}
-                      className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-colors shadow-xl z-10 relative"
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={clsx(
-                          "w-2 h-2 rounded-full",
-                          trap.risk_level === 'CRITICAL' ? "bg-red-500" :
-                            trap.risk_level === 'CAUTION' ? "bg-amber-500" :
-                              "bg-blue-500"
-                        )} />
-                        <span className={clsx(
-                          "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                          trap.risk_level === 'CRITICAL' ? "bg-red-500/10 text-red-500" :
-                            trap.risk_level === 'CAUTION' ? "bg-amber-500/10 text-amber-500" :
-                              "bg-blue-500/10 text-blue-500"
-                        )}>
-                          {trap.category}
-                        </span>
-                      </div>
+                  analysisResult.detected_traps.map((trap, idx) => {
+                    const isProcessingThis = isNegotiating && activeTrapId === idx;
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.05 }}
+                        key={idx}
+                        className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-colors shadow-xl z-10 relative"
+                      >
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={clsx(
+                            "w-2 h-2 rounded-full",
+                            trap.risk_level === 'CRITICAL' ? "bg-red-500" :
+                              trap.risk_level === 'CAUTION' ? "bg-amber-500" :
+                                "bg-blue-500"
+                          )} />
+                          <span className={clsx(
+                            "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                            trap.risk_level === 'CRITICAL' ? "bg-red-500/10 text-red-500" :
+                              trap.risk_level === 'CAUTION' ? "bg-amber-500/10 text-amber-500" :
+                                "bg-blue-500/10 text-blue-500"
+                          )}>
+                            {trap.category}
+                          </span>
+                        </div>
 
-                      <h3 className="text-base font-bold text-white mb-3">
-                        {trap.plain_english_explanation}
-                      </h3>
+                        <h3 className="text-base font-bold text-white mb-3">
+                          {trap.plain_english_explanation}
+                        </h3>
 
-                      <div className="bg-black rounded-lg p-4 mb-4 border border-white/5">
-                        <p className="text-neutral-400 font-mono text-xs leading-relaxed italic">
-                          "{trap.original_text}"
-                        </p>
-                      </div>
+                        <div className="bg-black rounded-lg p-4 mb-4 border border-white/5">
+                          <p className="text-neutral-400 font-mono text-xs leading-relaxed italic">
+                            "{trap.original_text}"
+                          </p>
+                        </div>
 
-                      <div className="flex items-start gap-3 pt-2 border-t border-white/5">
-                        <ArrowRight className="w-4 h-4 text-neutral-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-xs font-medium text-neutral-300 leading-relaxed">
-                          {trap.remediation}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))
+                        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                          <div className="flex items-start gap-3">
+                            <ArrowRight className="w-4 h-4 text-neutral-600 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs font-medium text-neutral-300 leading-relaxed max-w-[200px]">
+                              {trap.remediation}
+                            </p>
+                          </div>
+
+                          <button
+                            onClick={() => handleNegotiate(trap, idx)}
+                            disabled={isNegotiating}
+                            className="flex items-center gap-2 bg-white text-black px-3 py-1.5 rounded-lg font-bold hover:bg-neutral-200 transition-colors disabled:opacity-50 text-xs shadow-lg shadow-white/10"
+                            title="Generate Opt-Out Email"
+                          >
+                            {isProcessingThis ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3 fill-current" />}
+                            Fight This
+                          </button>
+                        </div>
+                      </motion.div>
+                    )
+                  })
                 )}
               </div>
             </div>
@@ -247,6 +291,7 @@ export default function Home() {
           </div>
         )}
       </div>
+      <NegotiationModal data={negotiationData} onClose={() => setNegotiationData(null)} />
     </main>
   );
 }

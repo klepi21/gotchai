@@ -8,3 +8,5 @@ langchain-openai
 opik
 pydantic
 python-dotenv
+pytesseract
+Pillow

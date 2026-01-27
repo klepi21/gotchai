@@ -35,6 +35,8 @@ You are a Senior Financial Forensic Auditor and Consumer Advocate. Your goal is 
     - "The Friction Trap": Excessive requirements for cancellation.
     - "Data Monetization": Permission to sell financial behavior.
     - "Liability Shifts": Making the user responsible for platform errors.
+    - "Mandatory Arbitration / Class Action Waiver": Forcing users to waive their right to sue (Common in Banks/Gyms).
+    - "Liquidated Damages": Excessive penalties for breaking the contract early.
 
 ### FEW-SHOT EXAMPLES (Validation Pattern)
 Here are examples of how you should analyze text:
@@ -89,10 +91,58 @@ def analyze_contract_text(text: str) -> AuditResult:
     chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    # We invoke the chain
-    result = chain.invoke({
-        "contract_text": text,
-        "format_instructions": parser.get_format_instructions()
-    })
+    try:
+        # We invoke the chain
+        result = chain.invoke({
+            "contract_text": text,
+            "format_instructions": parser.get_format_instructions()
+        })
+        return result
+    except Exception as e:
+        print(f"Error in audit chain: {e}")
+        # Return visible error as a "Trap" so user sees it
+        return AuditResult(
+            detected_traps=[
+                DetectionObject(
+                    original_text="System Error",
+                    risk_level="INFO",
+                    category="System",
+                    plain_english_explanation="The AI service is currently overloaded. Please wait 30 seconds and try again.",
+                    estimated_cost_impact="None",
+                    remediation="Retry shortly."
+                )
+            ], 
+            overall_predatory_score=0
+        )
     
-    return result
+class NegotiationResult(BaseModel):
+    subject_line: str = Field(description="A formal, punchy subject line for the email")
+    email_body: str = Field(description="The body of the email. Formal but firm.")
+
+def generate_negotiation_email(trap_text: str, category: str, explanation: str) -> NegotiationResult:
+    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.1)
+    parser = PydanticOutputParser(pydantic_object=NegotiationResult)
+
+    negotiation_prompt = ChatPromptTemplate.from_messages([
+        ("system", """
+        You are a tough Consumer Rights Lawyer. Your client has found a predatory clause in a contract.
+        Write a FORMAL, FIRM, and LEGALLY SOUND email to the company to opt-out, negotiate, or clarify this clause.
+        
+        Use "To Whom It May Concern," as the salutation.
+        Cite the specific clause text provided.
+        Demand a resolution (opt-out, fee waiver, or clarification).
+        Keep it under 150 words. Be direct.
+        """),
+        ("user", """
+        CLAUSE: "{trap_text}"
+        CATEGORY: {category}
+        ISSUE: {explanation}
+        """)
+    ])
+    
+    chain = negotiation_prompt | llm | parser
+    return chain.invoke({
+        "trap_text": trap_text,
+        "category": category,
+        "explanation": explanation
+    })

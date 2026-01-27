@@ -5,10 +5,17 @@ import os
 from typing import List
 
 from backend.pdf_engine import extract_text_from_pdf, get_coordinates_for_text
-from backend.auditor import analyze_contract_text, AuditResult
+from backend.auditor import analyze_contract_text, AuditResult, generate_negotiation_email
+
+from pydantic import BaseModel
+
+# (Removed misplaced endpoint)
+
+from pathlib import Path
 
 # Load environment variables
-load_dotenv()
+env_path = Path(__file__).parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 app = FastAPI(title="Forensic Financial Auditor API", version="0.1.0")
 
@@ -25,60 +32,103 @@ app.add_middleware(
 async def root():
     return {"message": "Forensic Financial Auditor API is running", "status": "active"}
 
+from backend.ocr_engine import convert_images_to_searchable_pdf
+
+import base64
+
 @app.post("/analyze", response_model=dict)
-async def analyze_pdf(file: UploadFile = File(...)):
+async def analyze_files(file: List[UploadFile] = File(...)):
     """
-    Main endpoint: Uploads PDF -> Extracts Text -> Audits -> Returns Traps + Coordinates
+    Main endpoint: Uploads PDF(s) or Images -> Extracts Text -> Audits -> Returns Traps
+    Supports: Single PDF, or Multiple Images (Snap & Audit)
     """
-    if file.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Invalid file type. Only PDFs allowed.")
-    
     try:
-        # 1. Read File
-        file_bytes = await file.read()
+        # Determine Mode
+        is_pdf_mode = len(file) == 1 and file[0].content_type == "application/pdf"
         
-        # 2. Extract Text
+        file_bytes = b""
+        filename = "contract.pdf"
+        
+        if is_pdf_mode:
+            # ORIGINAL PATH
+            file_bytes = await file[0].read()
+            filename = file[0].filename
+        else:
+            # SNAP & AUDIT PATH (Images -> PDF)
+            # Read all images
+            image_bytes_list = []
+            for f in file:
+                if f.content_type not in ["image/jpeg", "image/png", "image/heic", "image/jpg"]:
+                     # If mixed or unknown, skip or error. For hackathon, strict check.
+                     # If it's a PDF in a list of images, we might have issues.
+                     # Simplify: Only allow Images OR Single PDF.
+                     if f.content_type == "application/pdf":
+                         raise HTTPException(status_code=400, detail="Cannot mix PDF and Images. Upload one PDF or multiple Images.")
+                
+                content = await f.read()
+                image_bytes_list.append(content)
+            
+            print(f"Processing {len(image_bytes_list)} images with OCR...")
+            # Convert to Searchable PDF
+            file_bytes = convert_images_to_searchable_pdf(image_bytes_list)
+            filename = "scanned_contract.pdf"
+        
+        # --- COMMON PIPELINE ---
+        
+        # 2. Extract Text (PyMuPDF works on the PDF bytes, whether native or OCR'd)
         full_text = extract_text_from_pdf(file_bytes)
         
+        if not full_text or len(full_text) < 50:
+             raise HTTPException(status_code=400, detail="No text found. If uploading images, ensure they are clear.")
+
         # 3. Run AI Audit (LangChain)
-        # TRUNCATE TEXT for Hackathon MVP to avoid Groq Rate Limits (TPM)
-        # 15,000 chars is roughly 3-4k tokens.
+        # Reduced to 15k chars (approx 4k tokens) to safely allow 2-3 requests/min on Free Tier
         truncated_text = full_text[:15000]
         audit_result: AuditResult = analyze_contract_text(truncated_text)
         
         # 4. Map Coordinates
-        # Extract the "original_text" from each trap to find it in the PDF
         trap_quotes = [trap.original_text for trap in audit_result.detected_traps]
         coordinates_map = get_coordinates_for_text(file_bytes, trap_quotes)
         
         # 5. Merge Data
-        # We need to combine the AI result with the coordinates.
-        # We'll create a merged response.
-        
         traps_with_coords = []
         for trap in audit_result.detected_traps:
-            # Find the matching coordinate entry
-            # Note: This is a simple match. In production, handle duplicates better.
             matches = [c for c in coordinates_map if c['text'] == trap.original_text]
-            
-            # Use the first match's rects (or all of them if multiple)
-            # For simplicity, we just attach all found instances
             rects = [m['rect'] for m in matches if 'rect' in m]
             page_numbers = list(set([m['page'] for m in matches if 'page' in m]))
             
             trap_data = trap.model_dump()
-            trap_data['coordinates'] = rects # List of [x, y, w, h]
+            trap_data['coordinates'] = rects
             trap_data['pages'] = page_numbers
             traps_with_coords.append(trap_data)
+
+        # 6. Encode PDF for Frontend (if needed)
+        # Always return it to be safe, or just for images.
+        # Frontend logic will prefer this if present.
+        pdf_base64 = base64.b64encode(file_bytes).decode('utf-8')
             
         return {
             "overall_predatory_score": audit_result.overall_predatory_score,
             "detected_traps": traps_with_coords,
-            "filename": file.filename
+            "filename": filename,
+            "pdf_base64": pdf_base64
         }
         
     except Exception as e:
-        # In production, log this error propertly
-        print(f"Error processing PDF: {e}")
+        print(f"Error processing files: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class NegotiateRequest(BaseModel):
+    trap_text: str
+    category: str
+    explanation: str
+
+@app.post("/negotiate", response_model=dict)
+async def negotiate_clause(request: NegotiateRequest):
+    try:
+        result = generate_negotiation_email(request.trap_text, request.category, request.explanation)
+        return result.model_dump()
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
