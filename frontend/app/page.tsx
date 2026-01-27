@@ -142,7 +142,8 @@ export default function Home() {
           <div className="flex h-[calc(100vh-64px)] animate-in fade-in duration-300 group">
 
             {/* LEFT SIDEBAR: PURE BLACK BACKGROUND with High Opacity */}
-            <div className="w-[450px] flex-shrink-0 h-full bg-black border-r border-white/10 flex flex-col z-20 shadow-2xl">
+            {/* Mobile: Full Width, Desktop: Fixed 450px */}
+            <div className="w-full md:w-[450px] flex-shrink-0 h-full bg-black border-r border-white/10 flex flex-col z-20 shadow-2xl">
 
               {/* Score Header - Clean Typography */}
               <div className="p-8 pb-4">
@@ -231,8 +232,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* RIGHT MAIN: PDF VIEWER - CLEAN */}
-            <div className="flex-1 h-full bg-[#050505] relative overflow-hidden flex flex-col">
+            {/* RIGHT MAIN: PDF VIEWER - HIDDEN ON MOBILE */}
+            <div className="hidden md:flex flex-1 h-full bg-[#050505] relative overflow-hidden flex-col">
               <div className="absolute inset-0 overflow-y-auto p-12 custom-scrollbar">
                 <div className="flex justify-center min-h-full pb-20">
                   {/* Removed Blue Glow. Added simple, sharp border. */}
