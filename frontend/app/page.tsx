@@ -21,17 +21,31 @@ export default function Home() {
   const [isNegotiating, setIsNegotiating] = useState(false);
   const [activeTrapId, setActiveTrapId] = useState<number | null>(null);
 
-  // Simulated Live Stats
-  const [auditedCount, setAuditedCount] = useState(14205);
-  const [latency, setLatency] = useState(624);
+  // LIVE Stats (Real)
+  const [auditedCount, setAuditedCount] = useState(0);
+  const [latency, setLatency] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Randomly increment audited count
-      setAuditedCount(prev => prev + Math.floor(Math.random() * 3));
-      // Randomly fluctuate latency between 580 and 650
-      setLatency(prev => 580 + Math.floor(Math.random() * 70));
-    }, 2000);
+    const fetchStats = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005';
+        const res = await fetch(`${API_URL}/stats`);
+        if (res.ok) {
+          const data = await res.json();
+          // Update state with REAL values from backend
+          setAuditedCount(data.total_clauses);
+          setLatency(data.avg_latency);
+        }
+      } catch (e) {
+        console.error("Failed to fetch live stats", e);
+      }
+    };
+
+    // Initial fetch
+    fetchStats();
+
+    // Poll every 5 seconds
+    const interval = setInterval(fetchStats, 5000);
     return () => clearInterval(interval);
   }, []);
 

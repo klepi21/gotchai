@@ -19,6 +19,44 @@ load_dotenv(dotenv_path=env_path)
 
 app = FastAPI(title="Forensic Financial Auditor API", version="0.1.0")
 
+# --- Database / Stats Persistence ---
+import json
+import time
+
+STATS_FILE = "database.json"
+
+def get_stats():
+    if not os.path.exists(STATS_FILE):
+        return {
+            "total_requests": 0,
+            "total_clauses": 0,
+            "total_traps": 0,
+            "avg_latency": 0
+        }
+    try:
+        with open(STATS_FILE, "r") as f:
+            return json.load(f)
+    except:
+        return {"total_requests": 0, "total_clauses": 0, "total_traps": 0, "avg_latency": 0}
+
+def update_stats(new_latency, new_clauses, new_traps):
+    stats = get_stats()
+    
+    # Update Totals
+    n = stats["total_requests"]
+    current_avg = stats["avg_latency"]
+    
+    # Running Average Formula: NewAvg = ((OldAvg * N) + NewVal) / (N+1)
+    new_avg = ((current_avg * n) + new_latency) / (n + 1)
+    
+    stats["total_requests"] += 1
+    stats["total_clauses"] += new_clauses
+    stats["total_traps"] += new_traps
+    stats["avg_latency"] = round(new_avg, 2)
+    
+    with open(STATS_FILE, "w") as f:
+        json.dump(stats, f)
+
 # CORS Setup (Allow Frontend to talk to Backend)
 app.add_middleware(
     CORSMiddleware,
@@ -74,7 +112,8 @@ async def analyze_files(file: List[UploadFile] = File(...)):
             filename = "scanned_contract.pdf"
         
         # --- COMMON PIPELINE ---
-        
+        start_time = time.time() # Start Timer for Latency Stats
+
         # 2. Extract Text (PyMuPDF works on the PDF bytes, whether native or OCR'd)
         full_text = extract_text_from_pdf(file_bytes)
         
@@ -106,6 +145,20 @@ async def analyze_files(file: List[UploadFile] = File(...)):
         # Always return it to be safe, or just for images.
         # Frontend logic will prefer this if present.
         pdf_base64 = base64.b64encode(file_bytes).decode('utf-8')
+        
+        # --- UPDATE STATS ---
+        end_time = time.time()
+        latency_ms = (end_time - start_time) * 1000
+        
+        # Estimate clauses ~ 1 clause per 150 chars
+        num_clauses = max(1, len(truncated_text) // 150)
+        num_traps = len(audit_result.detected_traps)
+        
+        # Don't counting System Errors as traps
+        if num_traps > 0 and audit_result.detected_traps[0].category == "System":
+             num_traps = 0
+             
+        update_stats(latency_ms, num_clauses, num_traps)
             
         return {
             "overall_predatory_score": audit_result.overall_predatory_score,
@@ -118,6 +171,10 @@ async def analyze_files(file: List[UploadFile] = File(...)):
         print(f"Error processing files: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.get("/stats")
+async def get_system_stats():
+    return get_stats()
 
 class NegotiateRequest(BaseModel):
     trap_text: str
