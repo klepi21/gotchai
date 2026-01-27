@@ -141,8 +141,15 @@ def generate_negotiation_email(trap_text: str, category: str, explanation: str) 
     ])
     
     chain = negotiation_prompt | llm | parser
-    return chain.invoke({
-        "trap_text": trap_text,
-        "category": category,
-        "explanation": explanation
-    })
+    try:
+        return chain.invoke({
+            "trap_text": trap_text,
+            "category": category,
+            "explanation": explanation
+        })
+    except Exception as e:
+        print(f"Error generating negotiation email: {e}")
+        return NegotiationResult(
+            subject_line=f"Inquiry regarding {category} clause",
+            email_body=f"To Whom It May Concern,\n\nI am writing to request clarification regarding the following clause in my contract:\n\n\"{trap_text}\"\n\nPlease provide a written explanation of this term or options for opting out.\n\nSincerely,\n[Your Name]"
+        )
