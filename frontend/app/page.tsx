@@ -124,30 +124,71 @@ export default function Home() {
                   <p className="text-center text-xs font-medium text-neutral-600 uppercase tracking-widest mb-8">
                     Powered by Next-Gen Intelligence
                   </p>
-                  <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                    {/* Mock Logos */}
-                    <div className="flex items-center gap-2 text-xl font-bold text-white"><Zap className="w-6 h-6" /> Groq</div>
-                    <div className="flex items-center gap-2 text-xl font-bold text-white"><Search className="w-6 h-6" /> Opik</div>
-                    <div className="flex items-center gap-2 text-xl font-bold text-white"><Lock className="w-6 h-6" /> LangChain</div>
-                    <div className="flex items-center gap-2 text-xl font-bold text-white"><FileText className="w-6 h-6" /> PyMuPDF</div>
+                  <div className="flex flex-wrap justify-center items-center gap-12 opacity-70">
+                    {/* Logos with Subtitles */}
+                    <div className="flex flex-col items-center gap-2 group">
+                      <div className="flex items-center gap-2 text-xl font-bold text-white group-hover:text-emerald-400 transition-colors"><Zap className="w-6 h-6" /> Groq</div>
+                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">LPU Inference Engine</span>
+                    </div>
+                    <div className="w-px h-8 bg-white/10 hidden md:block" />
+                    <div className="flex flex-col items-center gap-2 group">
+                      <div className="flex items-center gap-2 text-xl font-bold text-white group-hover:text-blue-400 transition-colors"><Search className="w-6 h-6" /> Opik</div>
+                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">AI Observability</span>
+                    </div>
+                    <div className="w-px h-8 bg-white/10 hidden md:block" />
+                    <div className="flex flex-col items-center gap-2 group">
+                      <div className="flex items-center gap-2 text-xl font-bold text-white group-hover:text-yellow-400 transition-colors"><Lock className="w-6 h-6" /> LangChain</div>
+                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">Orchestration Framework</span>
+                    </div>
                   </div>
                 </div>
               </section>
 
-              {/* VALUE PROPS */}
-              <section className="w-full max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-3 gap-8">
+              {/* HOW IT WORKS / PIPELINE */}
+              <section className="w-full max-w-6xl mx-auto px-6 py-24">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-5xl font-black text-white mb-6">Military-Grade Audit Pipeline</h2>
+                  <p className="text-neutral-400 max-w-2xl mx-auto text-lg">
+                    We don't just "read" documents. We deconstruct, analyze, and verify every clause using a multi-stage AI workflow.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-4 gap-4 relative">
+                  {/* Connector Line (Desktop) */}
+                  <div className="hidden md:block absolute top-12 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-0" />
+
+                  {[
+                    { icon: FileText, title: "Ingestion", desc: "OCR & Text Extraction", color: "text-blue-500", bg: "bg-blue-500/10" },
+                    { icon: Zap, title: "Processing", desc: "Llama-3-70b Analysis", color: "text-purple-500", bg: "bg-purple-500/10" },
+                    { icon: ShieldCheck, title: "Verification", desc: "Opik Evaluation Guardrails", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                    { icon: Lock, title: "Protection", desc: "Actionable Legal Strategy", color: "text-yellow-500", bg: "bg-yellow-500/10" }
+                  ].map((step, i) => (
+                    <div key={i} className="relative z-10 flex flex-col items-center">
+                      <div className={clsx("w-24 h-24 rounded-2xl border border-white/10 flex items-center justify-center mb-6 bg-black backdrop-blur-xl", step.color)}>
+                        <step.icon className="w-10 h-10" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-1">{step.title}</h3>
+                      <p className="text-sm text-neutral-500">{step.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* VALUE PROPS / TECH SPECS */}
+              <section className="w-full max-w-6xl mx-auto px-6 pb-24 grid md:grid-cols-3 gap-8">
                 <div className="p-8 rounded-3xl bg-neutral-900/50 border border-white/5 hover:bg-neutral-900 transition-colors">
                   <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center mb-6">
                     <Zap className="w-6 h-6 text-blue-500" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3">Instant Analysis</h3>
-                  <p className="text-neutral-400 leading-relaxed">
-                    Powered by Llama-3-70b on Groq LPU™, getting results in under 800ms compared to traditional 30s audits.
+                  <h3 className="text-xl font-bold mb-3">Sub-Second Audits</h3>
+                  <p className="text-neutral-400 leading-relaxed text-sm">
+                    Powered by Groq's LPU™, we process 15,000 characters in under <span className="text-white font-bold">800ms</span>. Traditional LLMs take 30s+.
                   </p>
                 </div>
                 <div className="p-8 rounded-3xl bg-neutral-900/50 border border-white/5 hover:bg-neutral-900 transition-colors">
                   <div className="w-12 h-12 bg-emerald-600/10 rounded-2xl flex items-center justify-center mb-6">
                     <Scale className="w-6 h-6 text-emerald-500" />
+
                   </div>
                   <h3 className="text-xl font-bold mb-3">Actionable Advice</h3>
                   <p className="text-neutral-400 leading-relaxed">
