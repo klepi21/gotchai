@@ -1,0 +1,6 @@
+input,expected_output,risk_level,reference
+"Interest rates may be adjusted at the lender's sole discretion without prior notice.",Arbitrary rate hikes without consumer consent.,CRITICAL,Hidden Fees
+"To cancel, you must send a notarized letter via certified mail 90 days in advance.",High-friction cancellation (The Roach Motel pattern).,CAUTION,Termination
+"We reserve the right to share your transaction history with unnamed affiliate partners.",Third-party data monetization of sensitive finances.,CRITICAL,Privacy
+"Der Nutzer erklärt sich mit einer automatischen Verlängerung um 24 Monate einverstanden.",Automatic 24-month renewal (German language test).,CAUTION,Contract Length
+"Failure to pay within 24 hours results in a 15% flat convenience fee.",Predatory late fee structure.,CRITICAL,Hidden Fees
