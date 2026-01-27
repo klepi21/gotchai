@@ -24,6 +24,8 @@ export default function Home() {
   // LIVE Stats (Real)
   const [auditedCount, setAuditedCount] = useState(0);
   const [latency, setLatency] = useState(0);
+  const [safetyScore, setSafetyScore] = useState(98.4);
+  const [grade, setGrade] = useState("A+");
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -35,6 +37,29 @@ export default function Home() {
           // Update state with REAL values from backend
           setAuditedCount(data.total_clauses);
           setLatency(data.avg_latency);
+
+          // Calculate dynamic Safety Score
+          // Predatory Score is 0-100 (100 is bad). Safety is 100 - Predatory.
+          let avgPredatory = 0;
+          if (data.total_requests > 0) {
+            avgPredatory = data.total_predatory_score / data.total_requests;
+          }
+
+          // Only update score/grade if we have real data (requests > 0)
+          // Otherwise keep the optimistic defaults for a fresh install
+          if (data.total_requests > 0) {
+            const calculatedSafety = 100 - avgPredatory;
+            setSafetyScore(Number(calculatedSafety.toFixed(1)));
+
+            // Calculate Grade
+            if (calculatedSafety >= 97) setGrade("A+");
+            else if (calculatedSafety >= 93) setGrade("A");
+            else if (calculatedSafety >= 90) setGrade("A-");
+            else if (calculatedSafety >= 87) setGrade("B+");
+            else if (calculatedSafety >= 83) setGrade("B");
+            else if (calculatedSafety >= 80) setGrade("B-");
+            else setGrade("C");
+          }
         }
       } catch (e) {
         console.error("Failed to fetch live stats", e);
@@ -220,8 +245,8 @@ export default function Home() {
                   {/* Grid of Stats */}
                   <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
                     <div className="p-6 flex flex-col items-center text-center">
-                      <span className="text-3xl font-bold text-white mb-1">98.4%</span>
-                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Evaluation Pass Rate</span>
+                      <span className="text-3xl font-bold text-white mb-1">{safetyScore}%</span>
+                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Evaluation Safety</span>
                     </div>
                     <div className="p-6 flex flex-col items-center text-center">
                       <span className="text-3xl font-bold text-emerald-400 mb-1">~{latency}ms</span>
@@ -232,8 +257,8 @@ export default function Home() {
                       <span className="text-xs text-neutral-500 uppercase tracking-wider">Clauses Audited</span>
                     </div>
                     <div className="p-6 flex flex-col items-center text-center">
-                      <span className="text-3xl font-bold text-yellow-400 mb-1">A+</span>
-                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Security Score</span>
+                      <span className="text-3xl font-bold text-yellow-400 mb-1">{grade}</span>
+                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Security Grade</span>
                     </div>
                   </div>
                 </div>

@@ -31,15 +31,26 @@ def get_stats():
             "total_requests": 0,
             "total_clauses": 0,
             "total_traps": 0,
+            "total_predatory_score": 0,
             "avg_latency": 0
         }
     try:
         with open(STATS_FILE, "r") as f:
-            return json.load(f)
+            stats = json.load(f)
+            # Migration for existing files
+            if "total_predatory_score" not in stats:
+                stats["total_predatory_score"] = 0
+            return stats
     except:
-        return {"total_requests": 0, "total_clauses": 0, "total_traps": 0, "avg_latency": 0}
+        return {
+            "total_requests": 0,
+            "total_clauses": 0,
+            "total_traps": 0,
+            "total_predatory_score": 0,
+            "avg_latency": 0
+        }
 
-def update_stats(new_latency, new_clauses, new_traps):
+def update_stats(new_latency, new_clauses, new_traps, new_score):
     stats = get_stats()
     
     # Update Totals
@@ -52,6 +63,7 @@ def update_stats(new_latency, new_clauses, new_traps):
     stats["total_requests"] += 1
     stats["total_clauses"] += new_clauses
     stats["total_traps"] += new_traps
+    stats["total_predatory_score"] += new_score
     stats["avg_latency"] = round(new_avg, 2)
     
     with open(STATS_FILE, "w") as f:
@@ -158,7 +170,7 @@ async def analyze_files(file: List[UploadFile] = File(...)):
         if num_traps > 0 and audit_result.detected_traps[0].category == "System":
              num_traps = 0
              
-        update_stats(latency_ms, num_clauses, num_traps)
+        update_stats(latency_ms, num_clauses, num_traps, audit_result.overall_predatory_score)
             
         return {
             "overall_predatory_score": audit_result.overall_predatory_score,
