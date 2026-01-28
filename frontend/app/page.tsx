@@ -320,22 +320,69 @@ export default function Home() {
                 </div>
 
                 {analysisResult && (
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-neutral-900/50 border border-white/5">
-                    <div>
-                      <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Risk Score</div>
-                      <div className={clsx(
-                        "text-4xl font-black tracking-tighter",
-                        analysisResult.overall_predatory_score > 70 ? "text-red-500" :
-                          analysisResult.overall_predatory_score > 40 ? "text-amber-500" : "text-emerald-500"
-                      )}>
-                        {analysisResult.overall_predatory_score}
-                        <span className="text-lg text-neutral-600">/100</span>
+                  <div className="flex flex-col gap-4 p-5 rounded-2xl bg-neutral-900/50 border border-white/5 transition-all hover:bg-neutral-900/80">
+
+                    {/* Top Row: Score + Label */}
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Risk Score</div>
+                        <div className="flex items-baseline gap-2">
+                          <span className={clsx(
+                            "text-5xl font-black tracking-tighter",
+                            analysisResult.overall_predatory_score > 80 ? "text-red-600" :
+                              analysisResult.overall_predatory_score > 50 ? "text-amber-500" :
+                                "text-emerald-500"
+                          )}>
+                            {analysisResult.overall_predatory_score}
+                          </span>
+                          <span className="text-sm font-medium text-neutral-500">/100</span>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        {(() => {
+                          const score = analysisResult.overall_predatory_score;
+                          let label = "Safe";
+                          let color = "bg-emerald-500 text-emerald-950";
+
+                          if (score > 80) { label = "EXTREME DANGER"; color = "bg-red-600 text-white animate-pulse"; }
+                          else if (score > 50) { label = "Predatory"; color = "bg-amber-500 text-black"; }
+                          else if (score > 20) { label = "Moderate Risk"; color = "bg-yellow-200 text-yellow-900"; }
+
+                          return (
+                            <div className={clsx("px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest inline-block", color)}>
+                              {label}
+                            </div>
+                          );
+                        })()}
+                        <div className="mt-2 text-xs text-neutral-400">
+                          {analysisResult.detected_traps.length} Traps Detected
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Traps Found</div>
-                      <div className="text-xl font-bold text-white">{analysisResult.detected_traps.length}</div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
+                      <div
+                        className={clsx("h-full transition-all duration-1000 ease-out",
+                          analysisResult.overall_predatory_score > 80 ? "bg-red-600" :
+                            analysisResult.overall_predatory_score > 50 ? "bg-amber-500" :
+                              "bg-emerald-500"
+                        )}
+                        style={{ width: `${analysisResult.overall_predatory_score}%` }}
+                      />
                     </div>
+
+                    {/* Context Description */}
+                    <p className="text-xs text-neutral-400 leading-relaxed border-t border-white/5 pt-3 mt-1">
+                      {(() => {
+                        const score = analysisResult.overall_predatory_score;
+                        if (score > 80) return "⚠️ Critical Warning: This contract contains heavily one-sided terms that may waive your legal rights. Proceed with extreme caution.";
+                        if (score > 50) return "⚠️ Caution: Several predatory clauses detected. We recommend negotiating the flagged items.";
+                        if (score > 20) return "ℹ️ Notice: Contains standard commercial terms with some bias. Review the highlighted sections.";
+                        return "✅ Safe: This document appears to be standard and balanced.";
+                      })()}
+                    </p>
                   </div>
                 )}
               </div>
