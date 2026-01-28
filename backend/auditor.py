@@ -108,6 +108,24 @@ def analyze_contract_text(text: str) -> AuditResult:
             "contract_text": text,
             "format_instructions": parser.get_format_instructions()
         })
+        
+        # --- DETERMINISTIC SCORING ALGORITHM ---
+        # Instead of relying on the LLM to hallucinate a score, we calculate it mathematically
+        # based on the findings. This ensures consistency (e.g., same traps = same score).
+        
+        calculated_score = 0
+        for trap in result.detected_traps:
+            risk = trap.risk_level.upper()
+            if "CRITICAL" in risk:
+                calculated_score += 25
+            elif "CAUTION" in risk:
+                calculated_score += 10
+            else:
+                calculated_score += 2
+        
+        # Cap score at 100
+        result.overall_predatory_score = min(calculated_score, 100)
+        
         return result
     except Exception as e:
         print(f"Error in audit chain: {e}")
