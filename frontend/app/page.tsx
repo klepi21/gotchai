@@ -246,7 +246,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
                     <div className="p-6 flex flex-col items-center text-center">
                       <span className="text-3xl font-bold text-white mb-1">{safetyScore}%</span>
-                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Evaluation Safety</span>
+                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Avg. Contract Safety</span>
                     </div>
                     <div className="p-6 flex flex-col items-center text-center">
                       <span className="text-3xl font-bold text-emerald-400 mb-1">~{latency}ms</span>
@@ -254,11 +254,11 @@ export default function Home() {
                     </div>
                     <div className="p-6 flex flex-col items-center text-center">
                       <span className="text-3xl font-bold text-blue-400 mb-1">{auditedCount.toLocaleString()}</span>
-                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Clauses Audited</span>
+                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Total Clauses Analyzed</span>
                     </div>
                     <div className="p-6 flex flex-col items-center text-center">
                       <span className="text-3xl font-bold text-yellow-400 mb-1">{grade}</span>
-                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Security Grade</span>
+                      <span className="text-xs text-neutral-500 uppercase tracking-wider">Avg. Market Grade</span>
                     </div>
                   </div>
                 </div>
