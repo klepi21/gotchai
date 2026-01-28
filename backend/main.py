@@ -4,8 +4,14 @@ from dotenv import load_dotenv
 import os
 from typing import List
 
-from backend.pdf_engine import extract_text_from_pdf, get_coordinates_for_text
-from backend.auditor import analyze_contract_text, AuditResult, generate_negotiation_email
+try:
+    from backend.pdf_engine import extract_text_from_pdf, get_coordinates_for_text
+    from backend.auditor import analyze_contract_text, AuditResult, generate_negotiation_email
+    from backend.ocr_engine import convert_images_to_searchable_pdf
+except ModuleNotFoundError:
+    from pdf_engine import extract_text_from_pdf, get_coordinates_for_text
+    from auditor import analyze_contract_text, AuditResult, generate_negotiation_email
+    from ocr_engine import convert_images_to_searchable_pdf
 
 from pydantic import BaseModel
 
@@ -82,7 +88,7 @@ app.add_middleware(
 async def root():
     return {"message": "Forensic Financial Auditor API is running", "status": "active"}
 
-from backend.ocr_engine import convert_images_to_searchable_pdf
+
 
 import base64
 

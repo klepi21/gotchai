@@ -114,3 +114,5 @@ Import trace:
 ✓ Compiled in 38ms
  GET / 200 in 179ms (compile: 72ms, render: 108ms)
 ✓ Compiled in 22ms
+ GET / 200 in 209ms (compile: 77ms, render: 132ms)
+ GET / 200 in 44ms (compile: 7ms, render: 37ms)
