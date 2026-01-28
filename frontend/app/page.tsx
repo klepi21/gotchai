@@ -6,7 +6,7 @@ import DragDropUpload from '@/components/DragDropUpload';
 import { clsx } from 'clsx';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ArrowRight, ShieldCheck, Zap, Lock, Search, Scale, FileText, CheckCircle2, AlertTriangle, AlertCircle, Info, Loader2 } from 'lucide-react';
+import { ChevronLeft, ArrowRight, ShieldCheck, Zap, Lock, Search, Scale, FileText, CheckCircle2, AlertTriangle, AlertCircle, Info, Loader2, Download } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 import { NegotiationModal } from '@/components/NegotiationModal';
 
@@ -14,6 +14,18 @@ const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
   ssr: false,
   loading: () => <div className="flex items-center justify-center h-full text-neutral-500">Loading Viewer...</div>
 });
+
+const PDFDownloadLink = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+  { ssr: false, loading: () => <span className="text-[10px] text-neutral-600">Loading PDF...</span> }
+);
+
+const AuditReportPDF = dynamic(
+  () => import("@/components/AuditReportPDF").then((mod) => mod.AuditReportPDF),
+  { ssr: false }
+);
+
+
 
 export default function Home() {
   const { file, analysisResult } = useAuditStore();
@@ -396,6 +408,17 @@ export default function Home() {
                         return "✅ Safe: This document appears to be standard and balanced.";
                       })()}
                     </p>
+
+                    {/* PDF Download Button */}
+                    <div className="mt-2 pt-2 border-t border-white/5 flex justify-end">
+                      <PDFDownloadLink
+                        document={<AuditReportPDF score={analysisResult.overall_predatory_score} traps={analysisResult.detected_traps} filename={file?.name || "contract.pdf"} />}
+                        fileName="GotchAI_Audit_Report.pdf"
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-white transition-colors"
+                      >
+                        {({ loading }) => (loading ? 'Generating PDF...' : <><Download className="w-3 h-3" /> Download Full Report</>)}
+                      </PDFDownloadLink>
+                    </div>
                   </div>
                 )}
               </div>

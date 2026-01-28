@@ -1,0 +1,178 @@
+import React from 'react';
+import { Page, Text, View, Document, StyleSheet, Font } from '@react-pdf/renderer';
+
+// Define styles
+const styles = StyleSheet.create({
+    page: {
+        flexDirection: 'column',
+        backgroundColor: '#ffffff',
+        padding: 40,
+        fontFamily: 'Helvetica',
+    },
+    header: {
+        marginBottom: 20,
+        borderBottom: '2px solid #000',
+        paddingBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+    },
+    subtitle: {
+        fontSize: 10,
+        color: '#666',
+    },
+    section: {
+        margin: 10,
+        padding: 10,
+        flexGrow: 1,
+    },
+    scoreCard: {
+        backgroundColor: '#f5f5f5',
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    scoreTitle: {
+        fontSize: 12,
+        color: '#444',
+    },
+    scoreValue: {
+        fontSize: 32,
+        fontWeight: 'black',
+    },
+    riskLabel: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        padding: 6,
+        borderRadius: 4,
+        color: 'white',
+        backgroundColor: '#000',
+    },
+    trapSection: {
+        marginTop: 20,
+    },
+    trapHeader: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textTransform: 'uppercase',
+    },
+    trapItem: {
+        marginBottom: 15,
+        paddingBottom: 15,
+        borderBottom: '1px solid #eee',
+    },
+    trapCategory: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: '#666',
+        marginBottom: 4,
+    },
+    trapText: {
+        fontSize: 11,
+        fontFamily: 'Helvetica-Oblique',
+        marginBottom: 4,
+        color: '#c00',
+    },
+    trapExplanation: {
+        fontSize: 11,
+        color: '#333',
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 40,
+        right: 40,
+        fontSize: 8,
+        textAlign: 'center',
+        color: '#999',
+        borderTop: '1px solid #eee',
+        paddingTop: 10,
+    },
+    disclaimer: {
+        marginBottom: 5,
+    }
+});
+
+// Create Document Component
+interface AuditReportProps {
+    score: number;
+    traps: any[];
+    filename: string;
+}
+
+export const AuditReportPDF = ({ score, traps, filename }: AuditReportProps) => {
+    const getRiskLabel = (s: number) => {
+        if (s > 80) return { label: "EXTREME DANGER", color: "#ef4444" };
+        if (s > 50) return { label: "PREDATORY", color: "#f59e0b" };
+        if (s > 20) return { label: "MODERATE RISK", color: "#fcd34d" };
+        return { label: "SAFE", color: "#10b981" };
+    };
+
+    const risk = getRiskLabel(score);
+
+    return (
+        <Document>
+            <Page size="A4" style={styles.page}>
+
+                {/* Header */}
+                <View style={styles.header}>
+                    <View>
+                        <Text style={styles.title}>GotchAI</Text>
+                        <Text style={styles.subtitle}>Financial X-Ray Audit Report</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.subtitle}>{new Date().toLocaleDateString()}</Text>
+                    </View>
+                </View>
+
+                {/* Score Summary */}
+                <View style={styles.scoreCard}>
+                    <View>
+                        <Text style={styles.scoreTitle}>Overall Predatory Score</Text>
+                        <Text style={[styles.scoreValue, { color: risk.color }]}>{score}/100</Text>
+                    </View>
+                    <View style={[styles.riskLabel, { backgroundColor: risk.color }]}>
+                        <Text>{risk.label}</Text>
+                    </View>
+                </View>
+
+                {/* File Info */}
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={{ fontSize: 10, color: '#666' }}>Analyzed Document: {filename}</Text>
+                </View>
+
+                {/* Traps List */}
+                <View style={styles.trapSection}>
+                    <Text style={styles.trapHeader}>Detected Hazards ({traps.length})</Text>
+
+                    {traps.map((trap, i) => (
+                        <View key={i} style={styles.trapItem}>
+                            <Text style={styles.trapCategory}>CATEGORY: {trap.category?.toUpperCase() || "GENERAL"}</Text>
+                            <Text style={styles.trapText}>"{trap.original_text}"</Text>
+                            <Text style={styles.trapExplanation}>⚠️ {trap.plain_english_explanation}</Text>
+                        </View>
+                    ))}
+                </View>
+
+                {/* Footer */}
+                <View style={styles.footer}>
+                    <Text style={styles.disclaimer}>
+                        DISCLAIMER: This report is generated by AI and does not constitute legal advice.
+                        GotchAI is an automated analysis tool. Always consult with a qualified attorney for legal matters.
+                    </Text>
+                    <Text>Generated by GotchAI • gotchai.vercel.app</Text>
+                </View>
+
+            </Page>
+        </Document>
+    );
+};
