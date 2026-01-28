@@ -27,4 +27,4 @@ EXPOSE 8080
 # Run app.py when the container launches
 # Note: We run "main:app" because we will copy the contents of 'backend/' into '/app'
 # So main.py will be at /app/main.py
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]

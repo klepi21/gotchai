@@ -7,8 +7,19 @@ import opik
 import os
 
 # Initialize Opik
-os.environ["OPIK_PROJECT_NAME"] = "fine-print-xray"
-opik.configure(use_local=False)
+if os.getenv("OPIK_API_KEY"):
+    os.environ["OPIK_PROJECT_NAME"] = "fine-print-xray"
+    try:
+        opik.configure(use_local=False)
+    except Exception as e:
+        print(f"Failed to configure Opik Cloud: {e}")
+else:
+    print("OPIK_API_KEY not found. Defaulting to local/disabled mode.")
+    # Prevent interactive prompts in production
+    try:
+        opik.configure(use_local=True)
+    except:
+        pass
 
 # --- Pydantic Models for Structured Output ---
 class DetectionObject(BaseModel):
