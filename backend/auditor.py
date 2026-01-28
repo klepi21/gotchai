@@ -16,10 +16,10 @@ if os.getenv("OPIK_API_KEY"):
 else:
     print("OPIK_API_KEY not found. Defaulting to local/disabled mode.")
     # Prevent interactive prompts in production
-    try:
-        opik.configure(use_local=True)
-    except:
-        pass
+    # try:
+    #     opik.configure(use_local=True)
+    # except:
+    #     pass
 
 # --- Pydantic Models for Structured Output ---
 class DetectionObject(BaseModel):

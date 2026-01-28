@@ -30,7 +30,7 @@ async def run_evaluation():
             print(f"Analying: {input_text[:50]}...")
             
             # Run the AI
-            audit_result = analyze_contract_text(input_text, "evaluation_doc.pdf")
+            audit_result = analyze_contract_text(input_text)
             
             # Simple Evaluation Logic
             # 1. Did we find at least one trap?
