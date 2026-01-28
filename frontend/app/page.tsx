@@ -15,23 +15,20 @@ const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
   loading: () => <div className="flex items-center justify-center h-full text-neutral-500">Loading Viewer...</div>
 });
 
-const PDFDownloadLink = dynamic(
-  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
-  { ssr: false, loading: () => <span className="text-[10px] text-neutral-600">Loading PDF...</span> }
-);
-
-const AuditReportPDF = dynamic(
-  () => import("@/components/AuditReportPDF").then((mod) => mod.AuditReportPDF),
-  { ssr: false }
-);
-
-
+// Dynamic import for AuditReportPDF only when needed
+// const AuditReportPDF = dynamic(
+//   () => import("@/components/AuditReportPDF").then((mod) => mod.AuditReportPDF),
+//   { ssr: false }
+// );
 
 export default function Home() {
   const { file, analysisResult } = useAuditStore();
   const [negotiationData, setNegotiationData] = useState<{ subject: string, body: string } | null>(null);
   const [isNegotiating, setIsNegotiating] = useState(false);
   const [activeTrapId, setActiveTrapId] = useState<number | null>(null);
+
+  // PDF Generation State
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   // LIVE Stats (Real)
   const [auditedCount, setAuditedCount] = useState(0);
@@ -110,6 +107,38 @@ export default function Home() {
     } finally {
       setIsNegotiating(false);
       setActiveTrapId(null);
+    }
+  };
+
+  const handleDownloadReport = async () => {
+    if (!analysisResult) return;
+    setIsGeneratingPdf(true);
+    try {
+      // Dynamic import to avoid SSR/Bundle issues on load
+      const { pdf } = await import('@react-pdf/renderer');
+      const { AuditReportPDF } = await import('@/components/AuditReportPDF');
+
+      const blob = await pdf(
+        <AuditReportPDF
+          score={analysisResult.overall_predatory_score}
+          traps={analysisResult.detected_traps}
+          filename={file?.name || "contract.pdf"}
+        />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = "GotchAI_Audit_Report.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("PDF Generation failed", e);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -345,7 +374,7 @@ export default function Home() {
                 </div>
 
                 {analysisResult && (
-                  <div className="flex flex-col gap-4 p-5 rounded-2xl bg-neutral-900/50 border border-white/5 transition-all hover:bg-neutral-900/80">
+                  <div className="flex flex-col gap-4 p-5 rounded-2xl bg-neutral-900/50 border border-white/5 transition-all hover:bg-neutral-900/80 group/card relative">
 
                     {/* Top Row: Score + Label */}
                     <div className="flex items-start justify-between">
@@ -409,15 +438,23 @@ export default function Home() {
                       })()}
                     </p>
 
-                    {/* PDF Download Button */}
+                    {/* PDF Download Button (IMPERATIVE APPROACH) */}
                     <div className="mt-2 pt-2 border-t border-white/5 flex justify-end">
-                      <PDFDownloadLink
-                        document={<AuditReportPDF score={analysisResult.overall_predatory_score} traps={analysisResult.detected_traps} filename={file?.name || "contract.pdf"} />}
-                        fileName="GotchAI_Audit_Report.pdf"
-                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-white transition-colors"
+                      <button
+                        onClick={handleDownloadReport}
+                        disabled={isGeneratingPdf}
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {({ loading }) => (loading ? 'Generating PDF...' : <><Download className="w-3 h-3" /> Download Full Report</>)}
-                      </PDFDownloadLink>
+                        {isGeneratingPdf ? (
+                          <>
+                            <Loader2 className="w-3 h-3 animate-spin" /> Generating PDF...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-3 h-3" /> Download Full Report
+                          </>
+                        )}
+                      </button>
                     </div>
                   </div>
                 )}
