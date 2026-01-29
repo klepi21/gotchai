@@ -21,13 +21,6 @@ export const metadata: Metadata = {
     description: "Instant AI auditing for contracts. Find the traps before you sign.",
     url: "https://gotchai.vercel.app",
     siteName: "GotchAI",
-    images: [
-      {
-        url: "/opengraph-image.png",
-        width: 1200,
-        height: 630,
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
