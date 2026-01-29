@@ -112,8 +112,8 @@ MANDATORY: The 'original_text' field must be an EXACT copy of the substring foun
 """
 
 def get_auditor_chain():
-    # Use Gemini 1.5 Flash for high speed and low latency
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
+    # Use Gemini Flash Latest (Stable)
+    llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0)
     parser = PydanticOutputParser(pydantic_object=AuditResult)
 
     prompt = ChatPromptTemplate.from_messages([
@@ -126,16 +126,16 @@ def get_auditor_chain():
 
 @opik.track(name="contract_audit")
 def analyze_contract_text(text: str) -> AuditResult:
-    # Use Gemini 1.5 Flash (via get_auditor_chain default)
+    # Use Gemini Flash Latest (Stable Alias)
     chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    # Simple Retry Logic for network blips
-    MAX_RETRIES = 2
+    # Retry Logic with Backoff
+    MAX_RETRIES = 3
     
     for attempt in range(MAX_RETRIES):
         try:
-            print(f"🤖 Analyzing with Gemini 1.5 Flash (Attempt {attempt+1})...")
+            print(f"🤖 Analyzing with Gemini Flash (Attempt {attempt+1})...")
             
             # We invoke the chain
             result = chain.invoke({
@@ -151,11 +151,11 @@ def analyze_contract_text(text: str) -> AuditResult:
             for trap in result.detected_traps:
                 risk = trap.risk_level.upper()
                 if "CRITICAL" in risk:
-                    calculated_score += 25
+                    calculated_score += 20
                 elif "CAUTION" in risk:
-                    calculated_score += 10
+                    calculated_score += 5
                 else:
-                    calculated_score += 2
+                    calculated_score += 1
             
             # Cap score at 100
             result.overall_predatory_score = min(calculated_score, 100)
@@ -164,14 +164,18 @@ def analyze_contract_text(text: str) -> AuditResult:
 
         except Exception as e:
             print(f"⚠️ Attempt {attempt+1} failed: {e}")
-            if attempt == MAX_RETRIES - 1:
+            if attempt < MAX_RETRIES - 1:
+                wait_time = 4 * (attempt + 1)
+                print(f"⏳ Waiting {wait_time}s before retry...")
+                time.sleep(wait_time)
+            else:
                 return AuditResult(
                     detected_traps=[
                         DetectionObject(
                             original_text="System Error",
                             risk_level="INFO",
                             category="System",
-                            plain_english_explanation="The AI service is currently overloaded. Please wait 10 seconds and try again.",
+                            plain_english_explanation="The AI service is currently overloaded. Please wait 1 minute and try again.",
                             estimated_cost_impact="None",
                             remediation="Retry shortly."
                         )
@@ -184,7 +188,7 @@ class NegotiationResult(BaseModel):
     email_body: str = Field(description="The body of the email. Formal but firm.")
 
 def generate_negotiation_email(trap_text: str, category: str, explanation: str) -> NegotiationResult:
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.1)
+    llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0.1)
     parser = PydanticOutputParser(pydantic_object=NegotiationResult)
 
     negotiation_prompt = ChatPromptTemplate.from_messages([

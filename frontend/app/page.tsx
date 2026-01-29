@@ -225,7 +225,7 @@ export default function Home() {
                     {/* Logos with Subtitles */}
                     <div className="flex flex-col items-center gap-2 group">
                       <div className="flex items-center gap-2 text-xl font-bold text-white group-hover:text-blue-400 transition-colors"><SparklesIcon className="w-6 h-6" /> Gemini</div>
-                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">1.5 Flash Engine</span>
+                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">Flash Engine</span>
                     </div>
                     <div className="w-px h-8 bg-white/10 hidden md:block" />
                     <div className="flex flex-col items-center gap-2 group">
