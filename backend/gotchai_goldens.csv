@@ -3,29 +3,29 @@ input,expected_output,risk_level,reference
 "To cancel, you must send a notarized letter via certified mail 90 days in advance.",High-friction cancellation (The Roach Motel pattern).,CAUTION,Termination
 "We reserve the right to share your transaction history with unnamed affiliate partners.",Third-party data monetization of sensitive finances.,CRITICAL,Privacy
 "Der Nutzer erklärt sich mit einer automatischen Verlängerung um 24 Monate einverstanden.",Automatic 24-month renewal (German language test).,CAUTION,Contract Length
-"Failure to pay within 24 hours results in a 15% flat convenience fee.",Predatory late fee structure.,CRITICAL,Hidden Fees
+"Failure to pay within 24 hours results in a 15% flat convenience fee.",Predatory late fee structure.,CAUTION,Hidden Fees
 "The user waives any right to a trial by jury and agrees to binding arbitration in New York.",Mandatory arbitration clause aiming to block class actions.,CRITICAL,Arbitration
-"We may update these terms at any time, and your continued use constitutes acceptance.",Unilateral modification clause (standard but broad).,CAUTION,Terms Change
-"A monthly inactivity fee of $5.00 will be charged if there are no transactions for 30 days.",Zombie fee for dormant accounts.,CRITICAL,Hidden Fees
-"You grant us a perpetual, irrevocable, worldwide license to use any content you upload.",Excessive IP rights grab for user content.,CAUTION,Intellectual Property
-"The platform is provided 'as is' without any warranties, express or implied.",Standard liability disclaimer.,INFO,Liability
+"We may update these terms at any time, and your continued use constitutes acceptance.",Unilateral modification clause (standard but broad).,CRITICAL,Terms Change
+"A monthly inactivity fee of $5.00 will be charged if there are no transactions for 30 days.",Zombie fee for dormant accounts.,CAUTION,Hidden Fees
+"You grant us a perpetual, irrevocable, worldwide license to use any content you upload.",Excessive IP rights grab for user content.,CRITICAL,Intellectual Property
+"The platform is provided 'as is' without any warranties, express or implied.",Standard liability disclaimer.,CAUTION,Liability
 "We track your location data even when the app is not in use to improve ad targeting.",Aggressive privacy invasion for monetization.,CRITICAL,Privacy
 "If you terminate early, you must pay all remaining months of the 2-year contract immediately.",Acceleration clause / Liquidated damages.,CRITICAL,Termination
-"Disputes must be filed within 30 days of the incident or they are permanently waived.",Unreasonably short statute of limitations.,CRITICAL,Arbitration
+"Disputes must be filed within 30 days of the incident or they are permanently waived.",Unreasonably short statute of limitations.,CAUTION,Arbitration
 "We are not liable for any data breaches caused by third-party vendors used by us.",Shift of liability for security failures.,CAUTION,Liability
 "Membership renews automatically at the then-current non-promotional rate.",Auto-renewal into a higher price bracket.,CAUTION,Hidden Fees
 "You indemnify us against all legal claims arising from your use of the service.",Broad indemnification clause.,CAUTION,Liability
-"We may suspend your account at any time for any reason without notice.",Arbitrary termination rights.,CRITICAL,Termination
-"Access to your contact list is required for the app to function.",Unnecessary data access akin to spyware.,CRITICAL,Privacy
+"We may suspend your account at any time for any reason without notice.",Arbitrary termination rights.,CAUTION,Termination
+"Access to your contact list is required for the app to function.",Unnecessary data access akin to spyware.,CAUTION,Privacy
 "A paper statement fee of $3.99 applies to each billing cycle.",Junk fee for standard service.,CAUTION,Hidden Fees
 "We reserve the right to sell your browsing history to insurance providers.",High-risk data sale that could affect real-world rates.,CRITICAL,Privacy
-"Prices are subject to change due to 'market conditions' at our discretion.",Vague pricing terms allowing arbitrary hikes.,CAUTION,Hidden Fees
+"Prices are subject to change due to 'market conditions' at our discretion.",Vague pricing terms allowing arbitrary hikes.,CRITICAL,Hidden Fees
 "Any class action lawsuit is hereby waived by the user.",Direct class action waiver.,CRITICAL,Arbitration
 "Cancellation requires a phone call to our retention line between 9 AM and 5 PM EST.",Friction trap designed to discourage churn.,CAUTION,Termination
-"We claim ownership of any ideas or suggestions you submit to us.",IP grab for user feedback.,INFO,Intellectual Property
-"A 3% foreign transaction fee applies to all international purchases.",Standard but costly fee.,INFO,Hidden Fees
-"The use of a VPN to access the service is strictly prohibited and grounds for ban.",Arbitrary technical restriction.,INFO,Termination
-"We are not responsible for lost profits or consequential damages.",Standard limitation of liability.,INFO,Liability
+"We claim ownership of any ideas or suggestions you submit to us.",IP grab for user feedback.,CAUTION,Intellectual Property
+"A 3% foreign transaction fee applies to all international purchases.",Standard but costly fee.,CAUTION,Hidden Fees
+"The use of a VPN to access the service is strictly prohibited and grounds for ban.",Arbitrary technical restriction.,CAUTION,Termination
+"We are not responsible for lost profits or consequential damages.",Standard limitation of liability.,CAUTION,Liability
 "Your data is stored in servers located in jurisdictions with lower privacy standards.",Data sovereignty risk.,CAUTION,Privacy
 "We use cookies to track your activity across other websites.",Cross-site tracking for ads.,CAUTION,Privacy
-"An early exit fee of $200 applies if canceled within the first 6 months.",High penalty for leaving.,CRITICAL,Termination
+"An early exit fee of $200 applies if canceled within the first 6 months.",High penalty for leaving.,CAUTION,Termination

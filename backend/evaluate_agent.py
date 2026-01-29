@@ -9,14 +9,21 @@ import os
 client = opik.Opik(project_name="GotchAI-Validation")
 
 # 2. Load your Golden Dataset
+# 2. Load your Golden Dataset
+# 2. Load your Golden Dataset
 try:
     df = pd.read_csv("gotchai_goldens.csv")
+    # We want to test RISK LEVEL (Safety), so we map 'risk_level' -> 'reference' (Target for Equals metric)
+    df = df.rename(columns={
+        "reference": "category_label",
+        "risk_level": "reference" 
+    })
 except FileNotFoundError:
     print("Error: gotchai_goldens.csv not found.")
     exit(1)
 
 dataset = client.get_or_create_dataset("Golden-Traps-v2")
-dataset.clear() # Clear previous runs to ensure clean state
+dataset.clear() 
 dataset.insert(df.to_dict(orient="records"))
 
 # 3. Define the Task
@@ -27,33 +34,31 @@ def gotchai_task(dataset_item):
         result = analyze_contract_text(raw_text)
         
         if result.detected_traps:
-            # We take the first trap as the primary prediction
             first_trap = result.detected_traps[0]
-            predicted_category = first_trap.category
+            # Predict RISK LEVEL (CRITICAL/CAUTION/INFO)
+            predicted_output = first_trap.risk_level.upper()
             predicted_explanation = first_trap.plain_english_explanation
         else:
-            predicted_category = "None"
+            predicted_output = "NONE"
             predicted_explanation = "No trap detected"
             
     except Exception as e:
         print(f"Agent failed on input: {raw_text[:20]}... Error: {e}")
-        predicted_category = "Error"
+        predicted_output = "Error"
         predicted_explanation = str(e)
 
-    # RETURN FORMAT MUST MATCH METRIC EXPECTATIONS
-    # Equals metric compares 'output' vs 'reference' (from dataset)
     return {
-        "output": predicted_category, 
+        "output": predicted_output, 
         "explanation": predicted_explanation
     }
 
 # 4. Run the Evaluation
-print("Starting Opik Evaluation... This might take a minute.")
+print("Starting Opik Evaluation (Risk Match)... This might take a minute.")
 res = evaluate(
     dataset=dataset,
     task=gotchai_task,
-    scoring_metrics=[Equals(name="Category Match")],
-    experiment_name="Hackathon-Golden-Run-v2"
+    scoring_metrics=[Equals(name="Risk Match")],
+    experiment_name="Hackathon-Golden-Risk-v1"
 )
 
 print(f"\nEvaluation Complete!")
