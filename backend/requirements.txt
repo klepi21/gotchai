@@ -3,7 +3,7 @@ uvicorn
 python-multipart
 pymupdf
 langchain
-langchain-groq
+langchain-google-genai
 langchain-openai
 opik
 pydantic

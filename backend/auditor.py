@@ -1,4 +1,4 @@
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
@@ -111,8 +111,9 @@ Return a JSON object matching the schema provided.
 MANDATORY: The 'original_text' field must be an EXACT copy of the substring found in the document. Do not paraphrase the quote.
 """
 
-def get_auditor_chain(model_name="llama-3.3-70b-versatile"):
-    llm = ChatGroq(model=model_name, temperature=0)
+def get_auditor_chain():
+    # Use Gemini 1.5 Flash for high speed and low latency
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
     parser = PydanticOutputParser(pydantic_object=AuditResult)
 
     prompt = ChatPromptTemplate.from_messages([
@@ -199,7 +200,7 @@ class NegotiationResult(BaseModel):
     email_body: str = Field(description="The body of the email. Formal but firm.")
 
 def generate_negotiation_email(trap_text: str, category: str, explanation: str) -> NegotiationResult:
-    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.1)
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.1)
     parser = PydanticOutputParser(pydantic_object=NegotiationResult)
 
     negotiation_prompt = ChatPromptTemplate.from_messages([
