@@ -256,7 +256,7 @@ export default function Home() {
 
                   {[
                     { icon: FileText, title: "Ingestion", desc: "OCR & Text Extraction", color: "text-blue-500", bg: "bg-blue-500/10" },
-                    { icon: Zap, title: "Processing", desc: "Llama-3-70b Analysis", color: "text-purple-500", bg: "bg-purple-500/10" },
+                    { icon: Zap, title: "Processing", desc: "Grok 3 Mini Analysis", color: "text-purple-500", bg: "bg-purple-500/10" },
                     { icon: ShieldCheck, title: "Verification", desc: "Opik Evaluation Guardrails", color: "text-emerald-500", bg: "bg-emerald-500/10" },
                     { icon: Lock, title: "Protection", desc: "Actionable Legal Strategy", color: "text-yellow-500", bg: "bg-yellow-500/10" }
                   ].map((step, i) => (
@@ -326,7 +326,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl font-bold mb-3">Sub-Second Audits</h3>
                   <p className="text-neutral-400 leading-relaxed text-sm">
-                    Powered by Groq's LPU™, we process 15,000 characters in under <span className="text-white font-bold">800ms</span>. Traditional LLMs take 30s+.
+                    Powered by Grok 3 Mini (xAI), we process 15,000 characters in under <span className="text-white font-bold">800ms</span>. Traditional LLMs take 30s+.
                   </p>
                 </div>
                 <div className="p-8 rounded-3xl bg-neutral-900/50 border border-white/5 hover:bg-neutral-900 transition-colors">
