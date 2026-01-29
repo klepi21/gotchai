@@ -297,7 +297,7 @@ export default function Home() {
                 </div>
               </section>
 
-            </section>
+
 
             {/* VILLAIN SECTION: THE PROBLEM */}
             <section className="w-full max-w-6xl mx-auto px-6 py-24 border-b border-white/5">
