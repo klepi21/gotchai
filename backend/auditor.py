@@ -5,6 +5,9 @@ from pydantic import BaseModel, Field
 from typing import List
 import opik
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize Opik
 if os.getenv("OPIK_API_KEY"):
@@ -44,13 +47,36 @@ You are a Senior Financial Forensic Auditor and Consumer Advocate. Your goal is 
     - "Zombie Fees": Hidden recurring charges.
     - "Arbitrary Price Hikes": Clauses allowing the company to change rates without notice.
     - "The Friction Trap": Excessive requirements for cancellation.
-    - "Data Monetization": Permission to sell financial behavior.
+    - "Data Monetization": Permission to sell financial behavior (CRITICAL).
+    - "Data Sovereignty/Location": Storage in lower-privacy jurisdictions (CAUTION).
     - "Liability Shifts": Making the user responsible for platform errors.
     - "Mandatory Arbitration / Class Action Waiver": Forcing users to waive their right to sue (Common in Banks/Gyms).
     - "Liquidated Damages": Excessive penalties for breaking the contract early.
 
 ### FEW-SHOT EXAMPLES (Validation Pattern)
 Here are examples of how you should analyze text:
+
+Input: "We reserve the right to share your transaction history with unnamed affiliate partners."
+Analysis:
+{{
+    "original_text": "We reserve the right to share your transaction history with unnamed affiliate partners.",
+    "risk_level": "CRITICAL",
+    "category": "Privacy",
+    "plain_english_explanation": "They can sell your private bank data to strangers for profit.",
+    "estimated_cost_impact": "Privacy Breach/Targeted Ads",
+    "remediation": "Opt-out of data sharing immediately."
+}}
+
+Input: "Your data is stored in servers located in jurisdictions with lower privacy standards."
+Analysis:
+{{
+    "original_text": "Your data is stored in servers located in jurisdictions with lower privacy standards.",
+    "risk_level": "CAUTION",
+    "category": "Privacy",
+    "plain_english_explanation": "Your data is stored in a country with weaker privacy laws, but they aren't explicitly selling it.",
+    "estimated_cost_impact": "Low (hypothetical risk)",
+    "remediation": "Ask for data residency options."
+}}
 
 Input: "The monthly subscription fee is $9.99. We reserve the right to change this fee at any time without prior notice."
 Analysis:
@@ -102,47 +128,65 @@ def analyze_contract_text(text: str) -> AuditResult:
     chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    try:
-        # We invoke the chain
-        result = chain.invoke({
-            "contract_text": text,
-            "format_instructions": parser.get_format_instructions()
-        })
-        
-        # --- DETERMINISTIC SCORING ALGORITHM ---
-        # Instead of relying on the LLM to hallucinate a score, we calculate it mathematically
-        # based on the findings. This ensures consistency (e.g., same traps = same score).
-        
-        calculated_score = 0
-        for trap in result.detected_traps:
-            risk = trap.risk_level.upper()
-            if "CRITICAL" in risk:
-                calculated_score += 25
-            elif "CAUTION" in risk:
-                calculated_score += 10
-            else:
-                calculated_score += 2
-        
-        # Cap score at 100
-        result.overall_predatory_score = min(calculated_score, 100)
-        
-        return result
-    except Exception as e:
-        print(f"Error in audit chain: {e}")
-        # Return visible error as a "Trap" so user sees it
-        return AuditResult(
-            detected_traps=[
-                DetectionObject(
-                    original_text="System Error",
-                    risk_level="INFO",
-                    category="System",
-                    plain_english_explanation="The AI service is currently overloaded. Please wait 30 seconds and try again.",
-                    estimated_cost_impact="None",
-                    remediation="Retry shortly."
+    MAX_RETRIES = 3
+    base_delay = 2
+    
+    for attempt in range(MAX_RETRIES):
+        try:
+            # We invoke the chain
+            result = chain.invoke({
+                "contract_text": text,
+                "format_instructions": parser.get_format_instructions()
+            })
+            
+            # --- DETERMINISTIC SCORING ALGORITHM ---
+            # Instead of relying on the LLM to hallucinate a score, we calculate it mathematically
+            # based on the findings. This ensures consistency (e.g., same traps = same score).
+            
+            calculated_score = 0
+            for trap in result.detected_traps:
+                risk = trap.risk_level.upper()
+                if "CRITICAL" in risk:
+                    calculated_score += 25
+                elif "CAUTION" in risk:
+                    calculated_score += 10
+                else:
+                    calculated_score += 2
+            
+            # Cap score at 100
+            result.overall_predatory_score = min(calculated_score, 100)
+            
+            return result
+
+        except Exception as e:
+            error_str = str(e)
+            print(f"Attempt {attempt+1}/{MAX_RETRIES} failed: {e}")
+            
+            # Check for Rate Limits (429)
+            if "429" in error_str or "Rate limit" in error_str or "too many requests" in error_str.lower():
+                if attempt < MAX_RETRIES - 1:
+                    import time
+                    import random
+                    sleep_time = (base_delay * (2 ** attempt)) + random.uniform(0.1, 1.0)
+                    print(f"⚠️ Rate limit hit. Cooling down for {sleep_time:.2f}s...")
+                    time.sleep(sleep_time)
+                    continue
+            
+            # If it's not a rate limit, or we're out of retries, return the System Error
+            if attempt == MAX_RETRIES - 1:
+                return AuditResult(
+                    detected_traps=[
+                        DetectionObject(
+                            original_text="System Error",
+                            risk_level="INFO",
+                            category="System",
+                            plain_english_explanation="The AI service is currently overloaded. Please wait 30 seconds and try again.",
+                            estimated_cost_impact="None",
+                            remediation="Retry shortly."
+                        )
+                    ], 
+                    overall_predatory_score=0
                 )
-            ], 
-            overall_predatory_score=0
-        )
     
 class NegotiationResult(BaseModel):
     subject_line: str = Field(description="A formal, punchy subject line for the email")
