@@ -111,8 +111,8 @@ Return a JSON object matching the schema provided.
 MANDATORY: The 'original_text' field must be an EXACT copy of the substring found in the document. Do not paraphrase the quote.
 """
 
-def get_auditor_chain():
-    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
+def get_auditor_chain(model_name="llama-3.3-70b-versatile"):
+    llm = ChatGroq(model=model_name, temperature=0)
     parser = PydanticOutputParser(pydantic_object=AuditResult)
 
     prompt = ChatPromptTemplate.from_messages([
@@ -125,14 +125,20 @@ def get_auditor_chain():
 
 @opik.track(name="contract_audit")
 def analyze_contract_text(text: str) -> AuditResult:
-    chain = get_auditor_chain()
+    # Fallback Strategy: Best -> Good -> Fast
+    MODELS_TO_TRY = [
+        "llama-3.3-70b-versatile",
+        "mixtral-8x7b-32768",
+        "llama3-8b-8192"
+    ]
+    
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    MAX_RETRIES = 3
-    base_delay = 2
-    
-    for attempt in range(MAX_RETRIES):
+    for model in MODELS_TO_TRY:
         try:
+            print(f"🤖 Analyzing with model: {model}...")
+            chain = get_auditor_chain(model_name=model)
+            
             # We invoke the chain
             result = chain.invoke({
                 "contract_text": text,
@@ -160,33 +166,33 @@ def analyze_contract_text(text: str) -> AuditResult:
 
         except Exception as e:
             error_str = str(e)
-            print(f"Attempt {attempt+1}/{MAX_RETRIES} failed: {e}")
+            print(f"⚠️ Model {model} failed: {e}")
             
-            # Check for Rate Limits (429)
+            # Check for Rate Limits (429) to trigger fallback
             if "429" in error_str or "Rate limit" in error_str or "too many requests" in error_str.lower():
-                if attempt < MAX_RETRIES - 1:
-                    import time
-                    import random
-                    sleep_time = (base_delay * (2 ** attempt)) + random.uniform(0.1, 1.0)
-                    print(f"⚠️ Rate limit hit. Cooling down for {sleep_time:.2f}s...")
-                    time.sleep(sleep_time)
-                    continue
+                print(f"🔄 Rate limit hit on {model}. Switching to backup model...")
+                continue # Try next model
             
-            # If it's not a rate limit, or we're out of retries, return the System Error
-            if attempt == MAX_RETRIES - 1:
-                return AuditResult(
-                    detected_traps=[
-                        DetectionObject(
-                            original_text="System Error",
-                            risk_level="INFO",
-                            category="System",
-                            plain_english_explanation="The AI service is currently overloaded. Please wait 30 seconds and try again.",
-                            estimated_cost_impact="None",
-                            remediation="Retry shortly."
-                        )
-                    ], 
-                    overall_predatory_score=0
-                )
+            # If it's a non-rate-limit error (e.g. context length), we might also want to fallback?
+            # For now, assume other errors are fatal or we try next model anyway safely.
+            # actually, let's try next model for ANY error just to be robust
+            continue
+
+    # If all models fail:
+    print("❌ All models failed.")
+    return AuditResult(
+        detected_traps=[
+            DetectionObject(
+                original_text="System Error",
+                risk_level="INFO",
+                category="System",
+                plain_english_explanation="All AI models are currently overloaded. Please wait 1 minute and try again.",
+                estimated_cost_impact="None",
+                remediation="Retry shortly."
+            )
+        ], 
+        overall_predatory_score=0
+    )
     
 class NegotiationResult(BaseModel):
     subject_line: str = Field(description="A formal, punchy subject line for the email")
