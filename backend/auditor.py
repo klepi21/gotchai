@@ -68,9 +68,9 @@ MANDATORY: The 'original_text' field must be an EXACT copy of the substring foun
 """
 
 def get_auditor_chain():
-    # Use Grok 3 Mini (xAI) via OpenAI SDK
+    # Use Grok 4.1 Fast (xAI) via OpenAI SDK
     llm = ChatOpenAI(
-        model="grok-3-mini",
+        model="grok-4-1-fast-non-reasoning",
         openai_api_key=os.getenv("XAI_API_KEY"),
         openai_api_base="https://api.x.ai/v1",
         temperature=0
@@ -96,7 +96,7 @@ def analyze_contract_text(text: str) -> AuditResult:
     
     for attempt in range(MAX_RETRIES):
         try:
-            print(f"🤖 Analyzing with Grok 3 Mini (Attempt {attempt+1})...")
+            print(f"🤖 Analyzing with Grok 4.1 Fast (Attempt {attempt+1})...")
             
             # We invoke the chain
             result = chain.invoke({
@@ -147,7 +147,7 @@ class NegotiationResult(BaseModel):
 
 def generate_negotiation_email(trap_text: str, category: str, explanation: str) -> NegotiationResult:
     llm = ChatOpenAI(
-        model="grok-3-mini",
+        model="grok-4-1-fast-non-reasoning",
         openai_api_key=os.getenv("XAI_API_KEY"),
         openai_api_base="https://api.x.ai/v1",
         temperature=0.1
