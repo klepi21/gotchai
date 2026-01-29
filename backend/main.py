@@ -25,6 +25,14 @@ load_dotenv(dotenv_path=env_path)
 
 app = FastAPI(title="Forensic Financial Auditor API", version="0.1.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development, allow all. For prod, set to domain.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # --- Database / Stats Persistence ---
 import json
 import time

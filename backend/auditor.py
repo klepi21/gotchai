@@ -126,19 +126,16 @@ def get_auditor_chain():
 
 @opik.track(name="contract_audit")
 def analyze_contract_text(text: str) -> AuditResult:
-    # Fallback Strategy: Best -> Good -> Fast
-    MODELS_TO_TRY = [
-        "llama-3.3-70b-versatile",
-        "mixtral-8x7b-32768",
-        "llama3-8b-8192"
-    ]
-    
+    # Use Gemini 1.5 Flash (via get_auditor_chain default)
+    chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    for model in MODELS_TO_TRY:
+    # Simple Retry Logic for network blips
+    MAX_RETRIES = 2
+    
+    for attempt in range(MAX_RETRIES):
         try:
-            print(f"🤖 Analyzing with model: {model}...")
-            chain = get_auditor_chain(model_name=model)
+            print(f"🤖 Analyzing with Gemini 1.5 Flash (Attempt {attempt+1})...")
             
             # We invoke the chain
             result = chain.invoke({
@@ -166,34 +163,21 @@ def analyze_contract_text(text: str) -> AuditResult:
             return result
 
         except Exception as e:
-            error_str = str(e)
-            print(f"⚠️ Model {model} failed: {e}")
-            
-            # Check for Rate Limits (429) to trigger fallback
-            if "429" in error_str or "Rate limit" in error_str or "too many requests" in error_str.lower():
-                print(f"🔄 Rate limit hit on {model}. Switching to backup model...")
-                continue # Try next model
-            
-            # If it's a non-rate-limit error (e.g. context length), we might also want to fallback?
-            # For now, assume other errors are fatal or we try next model anyway safely.
-            # actually, let's try next model for ANY error just to be robust
-            continue
-
-    # If all models fail:
-    print("❌ All models failed.")
-    return AuditResult(
-        detected_traps=[
-            DetectionObject(
-                original_text="System Error",
-                risk_level="INFO",
-                category="System",
-                plain_english_explanation="All AI models are currently overloaded. Please wait 1 minute and try again.",
-                estimated_cost_impact="None",
-                remediation="Retry shortly."
-            )
-        ], 
-        overall_predatory_score=0
-    )
+            print(f"⚠️ Attempt {attempt+1} failed: {e}")
+            if attempt == MAX_RETRIES - 1:
+                return AuditResult(
+                    detected_traps=[
+                        DetectionObject(
+                            original_text="System Error",
+                            risk_level="INFO",
+                            category="System",
+                            plain_english_explanation="The AI service is currently overloaded. Please wait 10 seconds and try again.",
+                            estimated_cost_impact="None",
+                            remediation="Retry shortly."
+                        )
+                    ], 
+                    overall_predatory_score=0
+                )
     
 class NegotiationResult(BaseModel):
     subject_line: str = Field(description="A formal, punchy subject line for the email")
