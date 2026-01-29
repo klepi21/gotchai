@@ -67,7 +67,6 @@ Return a JSON object matching the schema provided.
 MANDATORY: The 'original_text' field must be an EXACT copy of the substring found in the document. Do not paraphrase the quote.
 """
 
-# --- Async Chains ---
 def get_auditor_chain():
     # Use Grok 3 Mini (xAI) via OpenAI SDK
     llm = ChatOpenAI(
@@ -80,94 +79,67 @@ def get_auditor_chain():
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", SYSTEM_PROMPT),
-        ("user", "AUDIT THE FOLLOWING SEGMENT:\n----------\n{contract_text}\n----------\n\n{format_instructions}")
+        ("user", "AUDIT THE FOLLOWING DOCUMENT:\n----------\n{contract_text}\n----------\n\n{format_instructions}")
     ])
 
-    # Convert to async runnable
     chain = prompt | llm | parser
     return chain
 
-import asyncio
-
-@opik.track(name="contract_audit_async")
-async def analyze_contract_text(text: str) -> AuditResult:
-    """
-    Asynchronously analyzes contract text in parallel chunks to reduce latency.
-    """
+@opik.track(name="contract_audit")
+def analyze_contract_text(text: str) -> AuditResult:
+    # Use Grok 3 Mini
     chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    # 1. Chunking Strategy
-    # Overlap avoids cutting a clause in half
-    CHUNK_SIZE = 6000
-    OVERLAP = 500
+    # Retry Logic
+    MAX_RETRIES = 3
     
-    chunks = []
-    if len(text) <= CHUNK_SIZE:
-        chunks.append(text)
-    else:
-        start = 0
-        while start < len(text):
-            end = min(start + CHUNK_SIZE, len(text))
-            # Extend to nearest newline if possible to avoid clean cuts
-            if end < len(text):
-                 next_newline = text.find('\n', end)
-                 if next_newline != -1 and next_newline - end < 200:
-                     end = next_newline
-            
-            chunks.append(text[start:end])
-            start = end - OVERLAP
-            
-    print(f"🚀 Splitting document into {len(chunks)} parallel parallel chunks...")
-
-    # 2. Define Async Task
-    async def process_chunk(chunk_text, index):
+    for attempt in range(MAX_RETRIES):
         try:
-            # print(f"Processing chunk {index+1}/{len(chunks)}...")
-            result = await chain.ainvoke({
-                "contract_text": chunk_text,
+            print(f"🤖 Analyzing with Grok 3 Mini (Attempt {attempt+1})...")
+            
+            # We invoke the chain
+            result = chain.invoke({
+                "contract_text": text,
                 "format_instructions": parser.get_format_instructions()
             })
-            return result
-        except Exception as e:
-            print(f"⚠️ Chunk {index+1} failed: {e}")
-            return None
-
-    # 3. Execute in Parallel
-    tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
-    results = await asyncio.gather(*tasks)
-    
-    # 4. Merge Results
-    all_traps = []
-    total_score = 0
-    
-    valid_results = [r for r in results if r is not None]
-    
-    if not valid_results:
-         # Fallback if everything failed
-         return AuditResult(detected_traps=[], overall_predatory_score=0)
-         
-    seen_texts = set()
-    
-    for res in valid_results:
-        # Avoid duplicate traps (from overlaps)
-        for trap in res.detected_traps:
-            # Simple dedup by exact text + category
-            dedup_key = f"{trap.original_text[:20]}-{trap.category}"
-            if dedup_key not in seen_texts:
-                all_traps.append(trap)
-                seen_texts.add(dedup_key)
-                
-                # Add to score
+            
+            # --- DETERMINISTIC SCORING ALGORITHM ---
+            calculated_score = 0
+            for trap in result.detected_traps:
                 risk = trap.risk_level.upper()
-                if "CRITICAL" in risk: total_score += 20
-                elif "CAUTION" in risk: total_score += 5
-                else: total_score += 1
-    
-    # Cap score
-    overall_score = min(total_score, 100)
-    
-    return AuditResult(detected_traps=all_traps, overall_predatory_score=overall_score)
+                if "CRITICAL" in risk:
+                    calculated_score += 20
+                elif "CAUTION" in risk:
+                    calculated_score += 5
+                else:
+                    calculated_score += 1
+            
+            # Cap score at 100
+            result.overall_predatory_score = min(calculated_score, 100)
+            
+            return result
+
+        except Exception as e:
+            print(f"⚠️ Attempt {attempt+1} failed: {e}")
+            if attempt < MAX_RETRIES - 1:
+                wait_time = 2 * (attempt + 1)
+                print(f"⏳ Waiting {wait_time}s before retry...")
+                time.sleep(wait_time)
+            else:
+                return AuditResult(
+                    detected_traps=[
+                        DetectionObject(
+                            original_text="System Error",
+                            risk_level="INFO",
+                            category="System",
+                            plain_english_explanation="The AI service is currently overloaded. Please wait 10 seconds and try again.",
+                            estimated_cost_impact="None",
+                            remediation="Retry shortly."
+                        )
+                    ], 
+                    overall_predatory_score=0
+                )
     
 class NegotiationResult(BaseModel):
     subject_line: str = Field(description="A formal, punchy subject line for the email")

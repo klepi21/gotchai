@@ -96,7 +96,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.api_route("/", methods=["GET", "HEAD"])
+@app.get("/")
 async def root():
     return {"message": "Forensic Financial Auditor API is running", "status": "active"}
 
@@ -151,9 +151,9 @@ async def analyze_files(file: List[UploadFile] = File(...)):
              raise HTTPException(status_code=400, detail="No text found. If uploading images, ensure they are clear.")
 
         # 3. Run AI Audit (LangChain)
-        # Increased to 50k chars (Parallel Processing)
-        truncated_text = full_text[:50000]
-        audit_result: AuditResult = await analyze_contract_text(truncated_text)
+        # Reduced to 15k chars (approx 4k tokens) to safely allow 2-3 requests/min on Free Tier
+        truncated_text = full_text[:15000]
+        audit_result: AuditResult = analyze_contract_text(truncated_text)
         
         # 4. Map Coordinates
         trap_quotes = [trap.original_text for trap in audit_result.detected_traps]
