@@ -280,8 +280,8 @@ export default function Home() {
                   <div className="flex flex-wrap justify-center items-center gap-12 opacity-70">
                     {/* Logos with Subtitles */}
                     <div className="flex flex-col items-center gap-2 group">
-                      <div className="flex items-center gap-2 text-xl font-bold text-white group-hover:text-blue-400 transition-colors"><SparklesIcon className="w-6 h-6" /> Grok AI</div>
-                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">Grok 3 Mini Engine</span>
+                      <div className="flex items-center gap-2 text-xl font-bold text-white group-hover:text-blue-400 transition-colors"><SparklesIcon className="w-6 h-6" /> Grok 4.1</div>
+                      <span className="text-[10px] text-neutral-600 uppercase tracking-widest group-hover:text-neutral-400 transition-colors">Next-Gen Fast Engine</span>
                     </div>
                     <div className="w-px h-8 bg-white/10 hidden md:block" />
                     <div className="flex flex-col items-center gap-2 group">
@@ -391,7 +391,7 @@ export default function Home() {
 
                   {[
                     { icon: FileText, title: "Ingestion", desc: "OCR & Text Extraction", color: "text-blue-500", bg: "bg-blue-500/10" },
-                    { icon: Zap, title: "Processing", desc: "Grok 3 Mini Analysis", color: "text-purple-500", bg: "bg-purple-500/10" },
+                    { icon: Zap, title: "Processing", desc: "Grok 4.1 Fast Analysis", color: "text-purple-500", bg: "bg-purple-500/10" },
                     { icon: ShieldCheck, title: "Verification", desc: "Opik Evaluation Guardrails", color: "text-emerald-500", bg: "bg-emerald-500/10" },
                     { icon: Lock, title: "Protection", desc: "Actionable Legal Strategy", color: "text-yellow-500", bg: "bg-yellow-500/10" }
                   ].map((step, i) => (
@@ -461,7 +461,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl font-bold mb-3">Sub-Second Audits</h3>
                   <p className="text-neutral-400 leading-relaxed text-sm">
-                    Powered by Grok 3 Mini (xAI), we process 15,000 characters in under <span className="text-white font-bold">800ms</span>. Traditional LLMs take 30s+.
+                    Powered by Grok 4.1 (xAI), we process 15,000 characters in under <span className="text-white font-bold">800ms</span>. Traditional LLMs take 30s+.
                   </p>
                 </div>
                 <div className="p-8 rounded-3xl bg-neutral-900/50 border border-white/5 hover:bg-neutral-900 transition-colors">
@@ -497,7 +497,7 @@ export default function Home() {
                 <div className="text-neutral-500 text-sm flex items-center gap-6">
                   <span>Built for the 2026 AI Hackathon</span>
                   <div className="w-1 h-1 rounded-full bg-neutral-800" />
-                  <span className="flex items-center gap-1">Powered by <span className="text-white font-bold">Grok (xAI)</span> & <span className="text-white font-bold">Opik</span></span>
+                  <span className="flex items-center gap-1">Powered by <span className="text-white font-bold">Grok 4.1 (xAI)</span> & <span className="text-white font-bold">Opik</span></span>
                 </div>
 
                 <div className="flex items-center gap-4">
