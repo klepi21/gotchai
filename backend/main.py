@@ -96,7 +96,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return {"message": "Forensic Financial Auditor API is running", "status": "active"}
 

@@ -13,3 +13,5 @@ services:
         sync: false
       - key: OPIK_API_KEY
         sync: false
+      - key: OPIK_WORKSPACE
+        value: klepi21
