@@ -1,1 +1,1 @@
-{"total_requests": 9, "total_clauses": 900, "total_traps": 14, "total_predatory_score": 210, "avg_latency": 15693.3, "accuracy_score": 16.7}
+{"total_requests": 10, "total_clauses": 908, "total_traps": 19, "total_predatory_score": 280, "avg_latency": 16303.65, "accuracy_score": 86.7}
