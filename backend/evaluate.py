@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GOLDEN_SET_FILE = "gotchai_goldens.csv"
-STATS_FILE = "database.json"
+GOLDEN_SET_FILE = os.path.join(os.path.dirname(__file__), "gotchai_goldens.csv")
+STATS_FILE = os.path.join(os.path.dirname(__file__), "database.json")
 
 async def run_evaluation():
     print(f"🚀 Starting Evaluation on {GOLDEN_SET_FILE}...")
@@ -30,8 +30,18 @@ async def run_evaluation():
             expected_risk = row["risk_level"].upper()
             expected_category = row["reference"]
 
-            # Run the AI
-            audit_result = analyze_contract_text(input_text)
+            # Retry loop for Rate Limits
+            while True:
+                audit_result = analyze_contract_text(input_text)
+                
+                # Check for System/Rate Limit Error (returned by auditor.py on exception)
+                if audit_result.detected_traps and audit_result.detected_traps[0].category == "System":
+                    print(f"\n⚠️ RATE LIMIT HIT: {audit_result.detected_traps[0].plain_english_explanation}")
+                    print("⏳ Cooling off for 60 seconds before retrying... (Press Ctrl+C to abort)")
+                    await asyncio.sleep(60)
+                    continue # Retry the same input
+                
+                break # Success, proceed
             
             # --- RIGOROUS EVALUATION ---
             match_found = False
@@ -59,6 +69,7 @@ async def run_evaluation():
             else:
                 reason = "No Traps Found"
 
+
             if match_found:
                 correct_count += 1
                 print(f"{input_text[:40]:<40}... | {expected_risk:<10} | {actual_risk:<10} | ✅ PASS")
@@ -74,8 +85,8 @@ async def run_evaluation():
             })
             
             # Rate limiting to prevent 429s (requested by user)
-            print("   ...cooling down (1s)...")
-            await asyncio.sleep(1.0)
+            print("   ...cooling down (2s)...")
+            await asyncio.sleep(2.0)
 
     accuracy = (correct_count / total_count) * 100 if total_count > 0 else 0
     print("-" * 100)
