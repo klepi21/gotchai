@@ -1,10 +1,12 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from typing import List
 import opik
 import os
+import time
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,11 +20,6 @@ if os.getenv("OPIK_API_KEY"):
         print(f"Failed to configure Opik Cloud: {e}")
 else:
     print("OPIK_API_KEY not found. Defaulting to local/disabled mode.")
-    # Prevent interactive prompts in production
-    # try:
-    #     opik.configure(use_local=True)
-    # except:
-    #     pass
 
 # --- Pydantic Models for Structured Output ---
 class DetectionObject(BaseModel):
@@ -43,7 +40,9 @@ You are a Senior Financial Forensic Auditor and Consumer Advocate. Your goal is 
 
 ### CAPABILITIES
 1. MULTILINGUAL ANALYSIS: If the text is not in English, first identify the language, translate the core concepts internally, but report findings in English.
-2. TRAP DETECTION: Look for:
+2. ZERO-TRUST MINDSET: Assume the contract writer is adversarial. Scrutinize every sentence.
+3. BIAS FOR DETECTION: It is better to flag a "CAUTION" item that turns out to be minor, than to miss a real trap. Do not be lenient.
+4. TRAP DETECTION: Look for:
     - "Zombie Fees": Hidden recurring charges.
     - "Arbitrary Price Hikes": Clauses allowing the company to change rates without notice.
     - "The Friction Trap": Excessive requirements for cancellation.
@@ -52,53 +51,10 @@ You are a Senior Financial Forensic Auditor and Consumer Advocate. Your goal is 
     - "Liability Shifts": Making the user responsible for platform errors.
     - "Mandatory Arbitration / Class Action Waiver": Forcing users to waive their right to sue (Common in Banks/Gyms).
     - "Liquidated Damages": Excessive penalties for breaking the contract early.
+    - "Unilateral Term Changes": Right to change T&Cs at any time (CRITICAL).
 
 ### FEW-SHOT EXAMPLES (Validation Pattern)
-Here are examples of how you should analyze text:
-
-Input: "We reserve the right to share your transaction history with unnamed affiliate partners."
-Analysis:
-{{
-    "original_text": "We reserve the right to share your transaction history with unnamed affiliate partners.",
-    "risk_level": "CRITICAL",
-    "category": "Privacy",
-    "plain_english_explanation": "They can sell your private bank data to strangers for profit.",
-    "estimated_cost_impact": "Privacy Breach/Targeted Ads",
-    "remediation": "Opt-out of data sharing immediately."
-}}
-
-Input: "Your data is stored in servers located in jurisdictions with lower privacy standards."
-Analysis:
-{{
-    "original_text": "Your data is stored in servers located in jurisdictions with lower privacy standards.",
-    "risk_level": "CAUTION",
-    "category": "Privacy",
-    "plain_english_explanation": "Your data is stored in a country with weaker privacy laws, but they aren't explicitly selling it.",
-    "estimated_cost_impact": "Low (hypothetical risk)",
-    "remediation": "Ask for data residency options."
-}}
-
-Input: "The monthly subscription fee is $9.99. We reserve the right to change this fee at any time without prior notice."
-Analysis:
-{{
-    "original_text": "We reserve the right to change this fee at any time without prior notice.",
-    "risk_level": "CRITICAL",
-    "category": "Hidden Fees",
-    "plain_english_explanation": "They can raise your price whenever they want, and they don't even have to tell you first.",
-    "estimated_cost_impact": "Unlimited potential increase",
-    "remediation": "Ask for a 'fixed price guarantee' for the first 12 months."
-}}
-
-Input: "To cancel, send a certified letter to our headquarters in Caymans."
-Analysis:
-{{
-    "original_text": "To cancel, send a certified letter to our headquarters in Caymans.",
-    "risk_level": "CAUTION",
-    "category": "Contract Length",
-    "plain_english_explanation": "They make it incredibly hard to cancel by forcing you to mail a physical letter internationally.",
-    "estimated_cost_impact": "High (Travel/Postage + Unwanted renewal)",
-    "remediation": "Demand an online cancellation option or email termination rights."
-}}
+(See prompt engineering file for full examples)
 
 ### SELF-CRITIQUE PROTOCOL
 Before outputting, ask yourself:
@@ -112,8 +68,13 @@ MANDATORY: The 'original_text' field must be an EXACT copy of the substring foun
 """
 
 def get_auditor_chain():
-    # Use Gemini Flash Latest (Stable)
-    llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0)
+    # Use Grok 3 Mini (xAI) via OpenAI SDK
+    llm = ChatOpenAI(
+        model="grok-3-mini",
+        openai_api_key=os.getenv("XAI_API_KEY"),
+        openai_api_base="https://api.x.ai/v1",
+        temperature=0
+    )
     parser = PydanticOutputParser(pydantic_object=AuditResult)
 
     prompt = ChatPromptTemplate.from_messages([
@@ -126,16 +87,16 @@ def get_auditor_chain():
 
 @opik.track(name="contract_audit")
 def analyze_contract_text(text: str) -> AuditResult:
-    # Use Gemini Flash Latest (Stable Alias)
+    # Use Grok 3 Mini
     chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
-    # Retry Logic with Backoff
+    # Retry Logic
     MAX_RETRIES = 3
     
     for attempt in range(MAX_RETRIES):
         try:
-            print(f"🤖 Analyzing with Gemini Flash (Attempt {attempt+1})...")
+            print(f"🤖 Analyzing with Grok 3 Mini (Attempt {attempt+1})...")
             
             # We invoke the chain
             result = chain.invoke({
@@ -144,9 +105,6 @@ def analyze_contract_text(text: str) -> AuditResult:
             })
             
             # --- DETERMINISTIC SCORING ALGORITHM ---
-            # Instead of relying on the LLM to hallucinate a score, we calculate it mathematically
-            # based on the findings. This ensures consistency (e.g., same traps = same score).
-            
             calculated_score = 0
             for trap in result.detected_traps:
                 risk = trap.risk_level.upper()
@@ -165,7 +123,7 @@ def analyze_contract_text(text: str) -> AuditResult:
         except Exception as e:
             print(f"⚠️ Attempt {attempt+1} failed: {e}")
             if attempt < MAX_RETRIES - 1:
-                wait_time = 4 * (attempt + 1)
+                wait_time = 2 * (attempt + 1)
                 print(f"⏳ Waiting {wait_time}s before retry...")
                 time.sleep(wait_time)
             else:
@@ -175,7 +133,7 @@ def analyze_contract_text(text: str) -> AuditResult:
                             original_text="System Error",
                             risk_level="INFO",
                             category="System",
-                            plain_english_explanation="The AI service is currently overloaded. Please wait 1 minute and try again.",
+                            plain_english_explanation="The AI service is currently overloaded. Please wait 10 seconds and try again.",
                             estimated_cost_impact="None",
                             remediation="Retry shortly."
                         )
@@ -188,7 +146,12 @@ class NegotiationResult(BaseModel):
     email_body: str = Field(description="The body of the email. Formal but firm.")
 
 def generate_negotiation_email(trap_text: str, category: str, explanation: str) -> NegotiationResult:
-    llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0.1)
+    llm = ChatOpenAI(
+        model="grok-3-mini",
+        openai_api_key=os.getenv("XAI_API_KEY"),
+        openai_api_base="https://api.x.ai/v1",
+        temperature=0.1
+    )
     parser = PydanticOutputParser(pydantic_object=NegotiationResult)
 
     negotiation_prompt = ChatPromptTemplate.from_messages([
