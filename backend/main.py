@@ -38,7 +38,8 @@ def get_stats():
             "total_clauses": 0,
             "total_traps": 0,
             "total_predatory_score": 0,
-            "avg_latency": 0
+            "avg_latency": 0,
+            "accuracy_score": 0.0
         }
     try:
         with open(STATS_FILE, "r") as f:
@@ -46,6 +47,8 @@ def get_stats():
             # Migration for existing files
             if "total_predatory_score" not in stats:
                 stats["total_predatory_score"] = 0
+            if "accuracy_score" not in stats:
+                stats["accuracy_score"] = 0.0
             return stats
     except:
         return {
@@ -53,7 +56,8 @@ def get_stats():
             "total_clauses": 0,
             "total_traps": 0,
             "total_predatory_score": 0,
-            "avg_latency": 0
+            "avg_latency": 0,
+            "accuracy_score": 0.0
         }
 
 def update_stats(new_latency, new_clauses, new_traps, new_score):

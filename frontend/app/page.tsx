@@ -36,7 +36,7 @@ export default function Home() {
   const [safetyScore, setSafetyScore] = useState(98.4);
   const [grade, setGrade] = useState("A+");
 
-  const [accuracy, setAccuracy] = useState(99.2);
+  const [accuracy, setAccuracy] = useState(0.0);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -311,7 +311,7 @@ export default function Home() {
                       </span>
                       {/* Tooltip */}
                       <div className="absolute top-full mt-2 w-48 p-3 bg-neutral-900 border border-white/10 rounded-xl text-[10px] text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-2xl">
-                        Based on Opik evaluation of 500+ golden set contracts against legal standards.
+                        Based on Opik evaluation against our expert Golden Set of contracts.
                       </div>
                     </div>
                   </div>
