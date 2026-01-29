@@ -2,7 +2,7 @@
 
 > **"The average Terms & Conditions takes 45 minutes to read. Nobody does it. GotchAI does it in 800ms."**
 
-![Status](https://img.shields.io/badge/Status-Hackathon_Winner-success) ![Accuracy](https://img.shields.io/badge/Verified_Accuracy-93.3%25-blue) ![Engine](https://img.shields.io/badge/AI_Engine-Grok_3_Mini-black) ![Observability](https://img.shields.io/badge/Powered_by-Opik-orange)
+![Status](https://img.shields.io/badge/Status-Hackathon_Competitor-success) ![Accuracy](https://img.shields.io/badge/Verified_Accuracy-93.3%25-blue) ![Engine](https://img.shields.io/badge/AI_Engine-Grok_3_Mini-black) ![Observability](https://img.shields.io/badge/Powered_by-Opik-orange)
 
 **GotchAI** is an AI-powered forensic auditor that deconstructs legal contracts in seconds, exposing hidden fees, predatory clauses, and liability traps. It doesn't just summarize; it gives you the weapons to **fight back**.
 
@@ -17,7 +17,7 @@ We built GotchAI to solve two problems in Legal AI: **Speed** and **Hallucinatio
 | Component | Technology | Why We Chose It |
 | :--- | :--- | :--- |
 | **Brain** | **Grok 3 Mini (xAI)** | Reason-heavy model tuned for "Zero-Trust" analysis. |
-| **Speed** | **Groq LPU™** | Sub-second inference (<800ms) for real-time auditing. |
+| **Speed** | **xAI Infrastructure** | Sub-second inference (<800ms) for real-time auditing. |
 | **Trust** | **Opik** | Deterministic evaluation pipeline with 93.3% verified accuracy. |
 | **Vision** | **PyMuPDF + OCR** | Extracts precise coordinates to "Heatmap" traps on the PDF. |
 
