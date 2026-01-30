@@ -4,6 +4,12 @@
 
 ---
 
+## Slide 0: The Introduction (The "Human" Behind the Code)
+**Visual**: A professional and friendly photo of yourself or the GotchAI logo.
+**Script**: "Hi, I’m Dinos, and I’m the creator of GotchAI. Like most of you, I used to click 'Agree' on every contract without looking. But then I realized: we aren't just clicking a button; we're often waiving our basic rights. I built GotchAI to give us all a fighting chance."
+
+---
+
 ## Slide 1: The Hook
 **Visual**: A close-up of a "Sign Here" line on a dense, blurry contract.
 **Headline**: You signed your life away this morning.
