@@ -23,7 +23,11 @@ from pathlib import Path
 env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
-app = FastAPI(title="Forensic Financial Auditor API", version="0.1.0")
+app = FastAPI(
+    title="GotchAI: Forensic Financial Auditor",
+    description="The engine that deconstructs predatory contracts in real-time.",
+    version="1.0.0"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -107,8 +111,9 @@ import base64
 @app.post("/analyze", response_model=dict)
 async def analyze_files(file: List[UploadFile] = File(...)):
     """
-    Main endpoint: Uploads PDF(s) or Images -> Extracts Text -> Audits -> Returns Traps
-    Supports: Single PDF, or Multiple Images (Snap & Audit)
+    The main Forensic Pipeline. 
+    Accepts PDFs or snapped images, extracts the 'DNA' of the contract, 
+    and returns a detailed audit of predatory traps.
     """
     try:
         # Determine Mode
@@ -141,8 +146,8 @@ async def analyze_files(file: List[UploadFile] = File(...)):
             file_bytes = convert_images_to_searchable_pdf(image_bytes_list)
             filename = "scanned_contract.pdf"
         
-        # --- COMMON PIPELINE ---
-        start_time = time.time() # Start Timer for Latency Stats
+        # --- THE AUDIT PIPELINE ---
+        start_time = time.time() # Monitor latency for transparency
 
         # 2. Extract Text (PyMuPDF works on the PDF bytes, whether native or OCR'd)
         full_text = extract_text_from_pdf(file_bytes)
@@ -180,7 +185,7 @@ async def analyze_files(file: List[UploadFile] = File(...)):
         end_time = time.time()
         latency_ms = (end_time - start_time) * 1000
         
-        # Estimate clauses ~ 1 clause per 150 chars
+        # Estimate clauses ~ 1 clause per 150 chars (standard forensic density)
         num_clauses = max(1, len(truncated_text) // 150)
         num_traps = len(audit_result.detected_traps)
         

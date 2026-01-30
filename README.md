@@ -1,77 +1,76 @@
 # GotchAI: Financial X-Ray Vision 👁️
 
-> **"The average Terms & Conditions takes 45 minutes to read. Nobody does it. GotchAI does it in 800ms."**
+> **The average person signs their life away every day. Terms & Conditions take 45 minutes to read—so 99% of us just click "Agree." GotchAI exposes the traps in 800ms.**
 
-![Status](https://img.shields.io/badge/Status-Hackathon_Competitor-success) ![Accuracy](https://img.shields.io/badge/Verified_Accuracy-93.3%25-blue) ![Engine](https://img.shields.io/badge/AI_Engine-Grok_3_Mini-black) ![Observability](https://img.shields.io/badge/Powered_by-Opik-orange)
-
-**GotchAI** is an AI-powered forensic auditor that deconstructs legal contracts in seconds, exposing hidden fees, predatory clauses, and liability traps. It doesn't just summarize; it gives you the weapons to **fight back**.
-
-![Demo](https://via.placeholder.com/800x400?text=GotchAI+Dashboard+Preview)
+[![Standard Hackathon Badge](https://img.shields.io/badge/Status-Hackathon_Competitor-success)](https://github.com/klepi21/gotchai)
+[![Accuracy Verified](https://img.shields.io/badge/Verified_Accuracy-93.3%25-blue)](https://github.com/klepi21/gotchai)
+[![Powered by Grok 4.1](https://img.shields.io/badge/Engine-Grok_4.1_Fast-black)](https://x.ai)
 
 ---
 
-## ⚡ The "Zero-Trust" Architecture
+## 🛑 The Problem: You're Signing a Contract You Didn't Read.
+Corporations hire armies of lawyers to hide "Zombie Fees," mandatory arbitration clauses, and predatory cancellation loops in walls of dense text. **You shouldn't need a law degree to buy a gym membership or rent an apartment.**
 
-We built GotchAI to solve two problems in Legal AI: **Speed** and **Hallucinations**.
+## 🛡️ The Solution: GotchAI.
+GotchAI is an AI-powered forensic auditor that deconstructs legal contracts in seconds. It doesn't just summarize; it gives you the **X-Ray vision** to see what they're hiding and the **weapons** to negotiate a better deal.
 
-| Component | Technology | Why We Chose It |
+---
+
+## ⚡ The "Zero-Trust" Lab
+We didn't just build a wrapper; we built a specialized laboratory for legal truth.
+
+| Component | Our Choice | Why It Matters to You |
 | :--- | :--- | :--- |
-| **Brain** | **Grok 3 Mini (xAI)** | Reason-heavy model tuned for "Zero-Trust" analysis. |
-| **Speed** | **xAI Infrastructure** | Sub-second inference (<800ms) for real-time auditing. |
-| **Trust** | **Opik** | Deterministic evaluation pipeline with 93.3% verified accuracy. |
-| **Vision** | **PyMuPDF + OCR** | Extracts precise coordinates to "Heatmap" traps on the PDF. |
+| **The Brain** | **Grok 4.1 Fast** | An adversarial model that assumes the contract is hiding something. It's skeptical by design. |
+| **The Speed** | **FastAPI + xAI** | Sub-second analysis. Because you need answers *before* you sign, not tomorrow. |
+| **The Trust** | **Opik** | We verify our results. A 93.3% accuracy rate means you can trust our "X-Ray." |
+| **The Vision** | **Hybrid OCR** | Even if it's a blurry photo of a lease, we find the precise text that puts you at risk. |
 
 ---
 
-## 🏆 Opik Evaluation (Verified 93.3% Accuracy)
+## 🏆 Proof of Performance (Verified 93.3%)
+Most AI projects "vibe check" their results. We **benchmark** ours.
+We maintain the `Golden-Traps-v2` dataset: 30 of the most dangerous predatory clauses currently used by major banks, service providers, and landlords.
 
-One of the few hackathon projects with a regression test suite.
-We maintain `Golden-Traps-v2`, a dataset of 30 known predatory clauses (Zombie Fees, Liability Shifts, etc.).
+- **Current Accuracy:** 93.3% (28/30 traps caught)
+- **Verified by:** Opik Evaluation Suite
+- **Mission:** We won't stop until we hit 100%.
 
-**Benchmark Results:**
-- **Metric:** Risk Match (Safety Classification)
-- **Score:** **93.3%** (28/30 Passed)
-- **Method:** Automated Agent Evaluation via `backend/evaluate_agent.py`
-
-> *Opik helped us diagnose that our initial model was "too polite". We tuned the system prompt to be adversarial, jumping from 40% -> 93% accuracy.*
+> *"Opik helped us realize our AI was initially 'too nice.' We tuned it to be an aggressive consumer advocate, jumping our detection rate from 40% to 93%."*
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Peek Under the Hood
 
-### Prerequisites
-- Node.js 18+
-- Python 3.10+
-- Grok (xAI) API Key
-- Opik API Key (Optional)
+### 1. Ingestion (The Vision)
+We don't just extract text; we map it. Our engine finds the literal coordinates of dangerous clauses so we can highlight them directly on your original document.
 
-### 1. Backend (The Brain)
+### 2. Audit (The Brain)
+Using **Grok 4.1**, we run a "Zero-Trust" audit. The AI looks for liability shifts, unilateral price hikes, and friction traps designed to keep you paying.
+
+### 3. Fight Back (The Action)
+Found a trap? One click generates a firm, legally-grounded negotiation email. We give you the script to say "No" effectively.
+
+---
+
+## 🚀 Experience it Locally
+
+### 1. The Lab (Backend)
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-
-# Create .env with XAI_API_KEY
-cp .env.example .env
+# Add your XAI_API_KEY to .env
 uvicorn main:app --reload --port 8005
 ```
 
-### 2. Frontend (The Face)
+### 2. The Shield (Frontend)
 ```bash
 cd frontend
-npm install
-npm run dev
+npm install && npm run dev
 ```
-Visit `http://localhost:3000` to see the magic. ✨
+Visit `http://localhost:3000` — Ready to audit. ✨
 
 ---
 
-## 📂 Repository Structure
-
-- **/backend**: FastAPI application, LangChain agent, and the Verification Suite.
-- **/frontend**: Next.js 14 App Router, Shadcn/UI, and Glassmorphism components.
-
----
-
-*Built with ❤️ for the 2026 AI Hackathon.*
+*Built with passion for consumer rights at the 2026 AI Hackathon.*

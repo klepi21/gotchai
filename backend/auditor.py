@@ -63,8 +63,8 @@ Before outputting, ask yourself:
 3. If the trap is weak, classify as 'INFO' or ignore it.
 
 ### OUTPUT INSTRUCTIONS
-Return a JSON object matching the schema provided. 
-MANDATORY: The 'original_text' field must be an EXACT copy of the substring found in the document. Do not paraphrase the quote.
+Return a structured audit report matching the schema provided. 
+MANDATORY: The 'original_text' field must be an EXACT, literal copy of the finding from the document. No summarization allowed in this field—we need the "fingerprint" of the trap.
 """
 
 def get_auditor_chain():
@@ -87,7 +87,10 @@ def get_auditor_chain():
 
 @opik.track(name="contract_audit")
 def analyze_contract_text(text: str) -> AuditResult:
-    # Use Grok 3 Mini
+    """
+    Initiates a 'Zero-Trust' forensic audit on the provided contract text.
+    Uses Grok 4.1 Fast to identify predatory patterns and calculate a risk score.
+    """
     chain = get_auditor_chain()
     parser = PydanticOutputParser(pydantic_object=AuditResult)
     
@@ -142,10 +145,14 @@ def analyze_contract_text(text: str) -> AuditResult:
                 )
     
 class NegotiationResult(BaseModel):
-    subject_line: str = Field(description="A formal, punchy subject line for the email")
-    email_body: str = Field(description="The body of the email. Formal but firm.")
+    subject_line: str = Field(description="A formal, punchy subject line that demands attention")
+    email_body: str = Field(description="The body of the negotiation email. Authoritative and legally grounded.")
 
 def generate_negotiation_email(trap_text: str, category: str, explanation: str) -> NegotiationResult:
+    """
+    Generates an adversarial response to a specific predatory clause.
+    Empowers the user with the right legal language to opt-out or dispute.
+    """
     llm = ChatOpenAI(
         model="grok-4-1-fast-non-reasoning",
         openai_api_key=os.getenv("XAI_API_KEY"),
