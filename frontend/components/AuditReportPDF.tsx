@@ -1,13 +1,23 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Font } from '@react-pdf/renderer';
 
+// Register a font that supports Greek characters
+Font.register({
+    family: 'Roboto',
+    fonts: [
+        { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Regular.ttf' },
+        { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Italic.ttf', fontStyle: 'italic' },
+        { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Bold.ttf', fontWeight: 'bold' },
+    ],
+});
+
 // Define styles
 const styles = StyleSheet.create({
     page: {
         flexDirection: 'column',
         backgroundColor: '#ffffff',
         padding: 40,
-        fontFamily: 'Helvetica',
+        fontFamily: 'Roboto',
     },
     header: {
         marginBottom: 20,
@@ -46,7 +56,7 @@ const styles = StyleSheet.create({
     },
     scoreValue: {
         fontSize: 32,
-        fontWeight: 'black',
+        fontWeight: 'bold',
     },
     riskLabel: {
         fontSize: 14,
@@ -78,7 +88,7 @@ const styles = StyleSheet.create({
     },
     trapText: {
         fontSize: 11,
-        fontFamily: 'Helvetica-Oblique',
+        fontStyle: 'italic',
         marginBottom: 4,
         color: '#c00',
     },
