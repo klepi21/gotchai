@@ -537,7 +537,7 @@ export default function Home() {
                     {/* Top Row: Score + Label */}
                     <div className="flex items-start justify-between">
                       <div>
-                        <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Risk Score</div>
+                        <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Predatory Score</div>
                         <div className="flex items-baseline gap-2">
                           <span className={clsx(
                             "text-5xl font-black tracking-tighter",

@@ -112,11 +112,11 @@ def analyze_contract_text(text: str) -> AuditResult:
             for trap in result.detected_traps:
                 risk = trap.risk_level.upper()
                 if "CRITICAL" in risk:
-                    calculated_score += 20
+                    calculated_score += 15
                 elif "CAUTION" in risk:
                     calculated_score += 5
                 else:
-                    calculated_score += 1
+                    calculated_score += 0 # INFO no longer adds to predatory score
             
             # Cap score at 100
             result.overall_predatory_score = min(calculated_score, 100)

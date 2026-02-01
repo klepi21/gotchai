@@ -15,7 +15,8 @@ def convert_images_to_searchable_pdf(image_bytes_list: List[bytes]) -> bytes:
             image = Image.open(io.BytesIO(img_bytes))
             # Convert to PDF with standard OCR (this returns a PDF byte string)
             # 'pdf' config makes it a searchable PDF
-            pdf_page = pytesseract.image_to_pdf_or_hocr(image, extension='pdf')
+            # Added Greek (ell) and English (eng) support
+            pdf_page = pytesseract.image_to_pdf_or_hocr(image, extension='pdf', lang='ell+eng')
             pdf_pages.append(pdf_page)
         except Exception as e:
             print(f"Error processing image: {e}")
