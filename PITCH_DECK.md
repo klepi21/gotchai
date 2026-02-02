@@ -1,74 +1,50 @@
-# GotchAI: The Pitch Deck Content 🎤
+# GotchAI: The 3-Minute Video Pitch Script 🎬
 
-*This document provides the "humanified" narrative and slide-by-slide content for your pitch. Use this as your script and the foundation for your visual slides.*
-
----
-
-## Slide 0: The Introduction (The "Human" Behind the Code)
-**Visual**: A professional and friendly photo of yourself or the GotchAI logo.
-**Script**: "Hi, I’m Dinos, and I’m the creator of GotchAI. Like most of you, I used to click 'Agree' on every contract without looking. But then I realized: we aren't just clicking a button; we're often waiving our basic rights. I built GotchAI to give us all a fighting chance."
+*This script is timed for a high-impact, 3-minute video entry. Follow the **[VISUAL CUE]** instructions to match what the judges see with what you say.*
 
 ---
 
-## Slide 1: The Hook
-**Visual**: A close-up of a "Sign Here" line on a dense, blurry contract.
-**Headline**: You signed your life away this morning.
-**Sub-headline**: The average person signs 12 contracts a month. 99% of us click "Agree" without reading a single word.
-**The "Human" Angle**: Why? Because it takes 45 minutes to read the fine print. Corporations bank on your exhaustion.
+## 0:00 - The Hook (15s)
+**[VISUAL CUE: Face Camera / Split Screen with Blurry Contract]**
+"Hi, I’m Dinos. Like you, I click 'Agree' on 12 contracts a month without reading a word. Why? Because it takes 45 minutes to decode the fine print. We aren't just clicking a button; we're waiving our rights. Corporations bank on our exhaustion. I built GotchAI to stop them."
 
 ---
 
-## Slide 2: The Problem
-**Visual**: A dark, messy wall of text with "Zombie Fees" and "Liability Waivers" highlighted in red.
-**Headline**: A Legal Minefield in Plain Sight.
-**Key Points**:
-- **Zombie Fees**: Charges that never die.
-- **Friction Traps**: Designed to make cancellation impossible.
-- **The Knowledge Gap**: You shouldn't need a $500/hr lawyer to buy a gym membership.
+## 0:15 - The Solution (30s)
+**[VISUAL CUE: Screen Record - Drag & Drop PDF -> Instant Analysis]**
+"This is GotchAI. Financial X-Ray Vision. Watch this."
+*(Pause for 2 seconds as the analysis completes in 800ms)*
+"In under a second, we didn't just summarize the document; we audited it. We found the hidden fees, the frictionless traps, and the liability drifts that threaten your wallet."
 
 ---
 
-## Slide 3: The Solution
-**Visual**: The GotchAI Dashboard - Clean, Glassmorphic, and Powerful.
-**Headline**: GotchAI: Financial X-Ray Vision.
-**Sub-headline**: We deconstruct the dense legalese in 800ms.
-**Value Prop**: We don't just summarize. We audit. We find the "DNA" of the trap and give you the weapons to fight back.
+## 0:45 - The Architecture: "The Forensic Lab" (60s)
+**[VISUAL CUE: Diagram - Contract -> Brain -> Verification -> Shield]**
+"We didn't just build a wrapper; we built a Forensic Laboratory. Here’s how it works:"
+
+1.  **The Vision (OCR)**: "First, our **Hybrid OCR Engine** scans the document—even if it's a blurry photo—and maps the exact XY coordinates of every word."
+2.  **The Brain (Grok 4.1)**: "Next, **Grok 4.1 Fast** analyzes the text. But here's the secret: we don't use a helpful assistant persona. We act as an **Adversarial Forensic Auditor**. It *expects* the contract to be predatory."
+3.  **The Verification (Opik)**: "We don't trust the AI blindly. We use **Opik** to trace every run against our 'Golden Set' of known traps. If the AI hallucinates, we catch it."
+4.  **The Score**: "Finally, we apply a **Deterministic Scoring Formula**. Critical risks are weighted 3x higher than minor cautions. A '90/100' isn't a guess; it's a mathematical certainty."
 
 ---
 
-## Slide 4: The Technology (The Forensic Lab)
-**Visual**: A simple diagram: Contract -> Grok 4.1 (The Brain) -> Opik (The Verification) -> The Shield (UI).
-**Headline**: Zero-Trust Architecture.
-**Key Points**:
-- **The Brain**: Grok 4.1 Fast - An adversarial model that *expects* the contract to be predatory.
-- **The Rigor**: We treat prompts like code. Continuous regression testing against real-world predatory clauses.
+## 1:45 - The "Fight Back" Demo (45s)
+**[VISUAL CUE: Click "Fight This" Button -> Show Email Generation in Modal]**
+"But knowledge is useless without action. When GotchAI finds a trap—like this 'Mandatory Arbitration' clause—I just click **Fight This**."
+*(Show the email generation)*
+"Instantly, I have a legally grounded negotiation script. I go from 'Victim' to 'Negotiator' in one click."
 
 ---
 
-## Slide 5: Validation (The Proof)
-**Visual**: A large "93.3% Accuracy" badge next to an Opik trace graph.
-**Headline**: We don't "Vibe Check." We Benchmark.
-**The Story**: We caught 28 out of 30 known predatory "Golden Traps." When Opik showed us our AI was being "too polite," we tuned it to become an aggressive consumer advocate.
+## 2:30 - The Vision & Close (30s)
+**[VISUAL CUE: Dinos Face Camera / Scrolling Dashboard Background]**
+"We solved Speed with Grok 4.1. We solved Trust with Opik. And now, we're solving the power imbalance between people and corporations.
+I'm Dinos, and this is GotchAI. Let's make the fine print transparent."
 
 ---
 
-## Slide 6: The "Fight Back" Factor
-**Visual**: A split screen: The predatory clause on one side, an auto-generated "Negotiation Email" on the other.
-**Headline**: From Victim to Negotiator.
-**Key Points**:
-- **The "Fight Back" Button**: Instantly turns a complex trap into a legally grounded dispute email.
-- **Impact**: We give the power back to the individual.
-
----
-
-## Slide 7: The Vision
-**Visual**: A world where every consumer has a "Legal Guardian" in their pocket.
-**Headline**: Ending the Era of the One-Sided Contract.
-**Closing**: Built with passion for consumer rights. Join us in making the fine print transparent.
-
----
-
-## 💡 Pitching Tips:
-- **Keep it Real**: Use a real story of a "Zombie Fee" you've encountered.
-- **Demo the Speed**: Show the 800ms audit in real-time. It’s your "wow" moment.
-- **Focus on the "Why"**: The judges care about the tech (Grok/Opik), but they win with the mission (Consumer Protection).
+## 💡 Production Tips for the 3m Video:
+- **Don't Read**: Verify the points, but speak naturally.
+- **Speed Matters**: The 800ms analysis is your "Magic Trick." Make sure that part of the screen recording is snappy.
+- **Audio**: Ensure your voice is clear. The music should be subtle background, building slightly at the "Fight Back" section.
