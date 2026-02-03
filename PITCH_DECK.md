@@ -19,8 +19,12 @@
 
 ---
 
-## The Cool Tech Part (30 seconds)
-"Under the hood, I'm using Grok—that's xAI's fast model—but I didn't just plug it in. I basically trained it to be paranoid. It doesn't assume the contract is fair; it assumes the contract is working against you. That's the whole mindset. And then I use this tool called Opik to double-check everything. So if the AI hallucinates or makes something up, we catch it."
+## The Cool Tech Part (40 seconds)
+"Oh, and it works even if you just take a photo of the contract. We use something called OCR—basically it reads the text from images—so you can literally snap a picture of a paper document and we'll analyze it.
+
+Under the hood, I'm using Grok—that's xAI's fast model—but I didn't just plug it in. I basically trained it to be paranoid. It doesn't assume the contract is fair; it assumes the contract is working against you. That's the whole mindset.
+
+And then there's Opik—that's our quality control system. It tracks every analysis and checks it against a set of known traps we've verified. So if the AI makes a mistake or hallucinates something, we catch it. That's how we hit 93% accuracy."
 
 ---
 
