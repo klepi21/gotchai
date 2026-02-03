@@ -1,50 +1,40 @@
-# GotchAI: The 3-Minute Video Pitch Script 🎬
+# GotchAI: The Pitch (Talk to Your Friends Version) 🗣️
 
-*This script is timed for a high-impact, 3-minute video entry. Follow the **[VISUAL CUE]** instructions to match what the judges see with what you say.*
-
----
-
-## 0:00 - The Hook (15s)
-**[VISUAL CUE: Face Camera / Split Screen with Blurry Contract]**
-"Hi, I’m Dinos. Like you, I click 'Agree' on 12 contracts a month without reading a word. Why? Because it takes 45 minutes to decode the fine print. We aren't just clicking a button; we're waiving our rights. Corporations bank on our exhaustion. I built GotchAI to stop them."
+*Read this like you're explaining the app to a friend at a coffee shop. No corporate speak. Just real talk.*
 
 ---
 
-## 0:15 - The Solution (30s)
-**[VISUAL CUE: Screen Record - Drag & Drop PDF -> Instant Analysis]**
-"This is GotchAI. Financial X-Ray Vision. Watch this."
-*(Pause for 2 seconds as the analysis completes in 800ms)*
-"In under a second, we didn't just summarize the document; we audited it. We found the hidden fees, the frictionless traps, and the liability drifts that threaten your wallet."
+## The Intro (15 seconds)
+"Hey, so you know how every time you sign up for something—a gym, a lease, an app—there's that massive wall of text nobody reads? Yeah, I built something that reads it for you. It's called GotchAI."
 
 ---
 
-## 0:45 - The Architecture: "The Forensic Lab" (60s)
-**[VISUAL CUE: Diagram - Contract -> Brain -> Verification -> Shield]**
-"We didn't just build a wrapper; we built a Forensic Laboratory. Here’s how it works:"
-
-1.  **The Vision (OCR)**: "First, our **Hybrid OCR Engine** scans the document—even if it's a blurry photo—and maps the exact XY coordinates of every word."
-2.  **The Brain (Grok 4.1)**: "Next, **Grok 4.1 Fast** analyzes the text. But here's the secret: we don't use a helpful assistant persona. We act as an **Adversarial Forensic Auditor**. It *expects* the contract to be predatory."
-3.  **The Verification (Opik)**: "We don't trust the AI blindly. We use **Opik** to trace every run against our 'Golden Set' of known traps. If the AI hallucinates, we catch it."
-4.  **The Score**: "Finally, we apply a **Deterministic Scoring Formula**. Critical risks are weighted 3x higher than minor cautions. A '90/100' isn't a guess; it's a mathematical certainty."
+## The Problem (20 seconds)
+"Here's the thing: those contracts are designed to confuse you. They hide fees in weird places, they make it almost impossible to cancel, and half of them have clauses saying you can't even sue them if they screw you over. It's wild. And the average person doesn't have time or money to hire a lawyer just to sign up for Netflix."
 
 ---
 
-## 1:45 - The "Fight Back" Demo (45s)
-**[VISUAL CUE: Click "Fight This" Button -> Show Email Generation in Modal]**
-"But knowledge is useless without action. When GotchAI finds a trap—like this 'Mandatory Arbitration' clause—I just click **Fight This**."
-*(Show the email generation)*
-"Instantly, I have a legally grounded negotiation script. I go from 'Victim' to 'Negotiator' in one click."
+## The Solution (30 seconds)
+"So I made GotchAI. You literally just drop in a contract—a PDF, a photo, whatever—and in less than a second, it tells you exactly what's wrong with it. Not just 'this is bad,' but *why* it's bad, in plain English. Like, 'Hey, this clause means they can charge you extra fees without telling you.' Stuff like that."
 
 ---
 
-## 2:30 - The Vision & Close (30s)
-**[VISUAL CUE: Dinos Face Camera / Scrolling Dashboard Background]**
-"We solved Speed with Grok 4.1. We solved Trust with Opik. And now, we're solving the power imbalance between people and corporations.
-I'm Dinos, and this is GotchAI. Let's make the fine print transparent."
+## The Cool Tech Part (30 seconds)
+"Under the hood, I'm using Grok—that's xAI's fast model—but I didn't just plug it in. I basically trained it to be paranoid. It doesn't assume the contract is fair; it assumes the contract is trying to screw you. That's the whole mindset. And then I use this tool called Opik to double-check everything. So if the AI hallucinates or makes something up, we catch it."
 
 ---
 
-## 💡 Production Tips for the 3m Video:
-- **Don't Read**: Verify the points, but speak naturally.
-- **Speed Matters**: The 800ms analysis is your "Magic Trick." Make sure that part of the screen recording is snappy.
-- **Audio**: Ensure your voice is clear. The music should be subtle background, building slightly at the "Fight Back" section.
+## The Action Part (20 seconds)
+"But here's the best part: you don't just get a report. You get a 'Fight Back' button. If there's a bad clause, you click it, and the app writes you a legal email to dispute it or opt out. Like, instantly. You go from 'I have no idea what this means' to 'Here's my formal objection' in ten seconds."
+
+---
+
+## The Close (15 seconds)
+"That's basically it. I built GotchAI because I was tired of feeling dumb every time I signed something. Now I just drop it in, see the traps, and fight back if I need to. It's like having a lawyer in your pocket, but free and way faster."
+
+---
+
+## 💡 Tips for Recording:
+- **Be yourself.** If you mess up, just restart the sentence. It'll feel more natural.
+- **Show the demo.** When you say "drop in a contract," actually do it on screen. Let them see the 800ms magic.
+- **Smile.** You're proud of this thing. Let that show.
