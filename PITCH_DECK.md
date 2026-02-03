@@ -10,7 +10,7 @@
 ---
 
 ## The Problem (20 seconds)
-"Here's the thing: those contracts are designed to confuse you. They hide fees in weird places, they make it almost impossible to cancel, and half of them have clauses saying you can't even sue them if they screw you over. It's wild. And the average person doesn't have time or money to hire a lawyer just to sign up for Netflix."
+"Here's the thing: those contracts are designed to confuse you. They hide fees in weird places, they make it almost impossible to cancel, and half of them have clauses saying you can't even sue them if something goes wrong. It's wild. And the average person doesn't have time or money to hire a lawyer just to sign up for Netflix."
 
 ---
 
@@ -20,7 +20,7 @@
 ---
 
 ## The Cool Tech Part (30 seconds)
-"Under the hood, I'm using Grok—that's xAI's fast model—but I didn't just plug it in. I basically trained it to be paranoid. It doesn't assume the contract is fair; it assumes the contract is trying to screw you. That's the whole mindset. And then I use this tool called Opik to double-check everything. So if the AI hallucinates or makes something up, we catch it."
+"Under the hood, I'm using Grok—that's xAI's fast model—but I didn't just plug it in. I basically trained it to be paranoid. It doesn't assume the contract is fair; it assumes the contract is working against you. That's the whole mindset. And then I use this tool called Opik to double-check everything. So if the AI hallucinates or makes something up, we catch it."
 
 ---
 
