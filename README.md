@@ -16,9 +16,23 @@ I built this to give regular people a fighting chance. You drop in a PDF or take
 I didn't want this to be another "nice" AI that just summarizes things. I wanted it to be a skeptic.
 
 *   **The Brain:** I'm using **Grok 4.1 Fast**. I tuned it to be paranoid—it assumes the contract is trying to screw you over, and its job is to find out how.
-*   **The Gut Check:** I used **Opik** to actually test the AI. I fed it a bunch of "Golden Traps" (real predatory clauses) to make sure it was actually catching them. It's sitting at **93.3% accuracy** right now.
+*   **The Gut Check:** I used **Opik** to track every single audit and catch where the AI was hallucinating or being too lenient. 
+    *   **The Dataset:** I built a "Golden Traps" dataset (`backend/gotchai_goldens.csv`) containing 30 of the most predatory clauses found in real-world bank, gym, and housing contracts.
+    *   **The Loop:** By running the evaluation script (`backend/evaluate.py`), I could see exactly which traps Grok was missing. I used Opik's tracing to refine the system prompt in `backend/auditor.py` until the AI hit its current **93.3% accuracy** score.
+    *   **The Proof:** Every time I run an evaluation, it generates a full `evaluation_report.pdf` and updates `database.json` with the latest live accuracy metrics.
+
 *   **Vision:** If you have a physical contract, just snap a photo. The OCR reads the text (even if the photo is a bit shaky) and analyzes it instantly.
 *   **The "Fight Back" Button:** This is my favorite part. Once it finds a bad clause, you click one button and the app writes a firm, professional email for you to send back to the company to dispute it.
+
+---
+
+## 🛠️ The Audit Lab (Tech Details)
+
+If you're looking at the code, here's the core of how the logic works:
+- `backend/auditor.py`: The "Zero-Trust" engine. This is where Grok 4.1 is prompted to be a skeptic.
+- `backend/evaluate.py`: The evaluation suite that runs the AI against the Golden Traps.
+- `backend/gotchai_goldens.csv`: The benchmark for predatory clause detection.
+- `backend/ocr_engine.py`: The vision layer that handles physical document scans.
 
 ---
 
