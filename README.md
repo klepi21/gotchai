@@ -1,76 +1,47 @@
-# GotchAI: Financial X-Ray Vision 👁️
+# GotchAI: Stop Signing Things You Haven't Read. �️
 
-> **The average person signs their life away every day. Terms & Conditions take 45 minutes to read—so 99% of us just click "Agree." GotchAI exposes the traps in 800ms.**
-
-[![Standard Hackathon Badge](https://img.shields.io/badge/Status-Hackathon_Competitor-success)](https://github.com/klepi21/gotchai)
-[![Accuracy Verified](https://img.shields.io/badge/Verified_Accuracy-93.3%25-blue)](https://github.com/klepi21/gotchai)
-[![Powered by Grok 4.1](https://img.shields.io/badge/Engine-Grok_4.1_Fast-black)](https://x.ai)
+**We all do it. You see a 50-page "Terms and Conditions" wall of text, and you just click "Agree" because you have a life. GotchAI reads that wall for you and spots the traps in about 1000ms.**
 
 ---
 
-## 🛑 The Problem: You're Signing a Contract You Didn't Read.
-Corporations hire armies of lawyers to hide "Zombie Fees," mandatory arbitration clauses, and predatory cancellation loops in walls of dense text. **You shouldn't need a law degree to buy a gym membership or rent an apartment.**
+## 🛑 The Problem: You're being tricked.
+Most contracts are written by lawyers to protect companies, not you. They hide things like hidden fees, weird cancellation rules, and clauses that say you can't even sue them if they mess up. You shouldn't need to spend $300 an hour on a lawyer just to sign up for a gym or a lease.
 
 ## 🛡️ The Solution: GotchAI.
-GotchAI is an AI-powered forensic auditor that deconstructs legal contracts in seconds. It doesn't just summarize; it gives you the **X-Ray vision** to see what they're hiding and the **weapons** to negotiate a better deal.
+I built this to give regular people a fighting chance. You drop in a PDF or take a photo of a paper contract, and the app tells you exactly what's wrong with it. No legal jargon—just real talk about where you're at risk.
 
 ---
 
-## ⚡ The "Zero-Trust" Lab
-We didn't just build a wrapper; we built a specialized laboratory for legal truth.
+## ⚡ How I Built This
+I didn't want this to be another "nice" AI that just summarizes things. I wanted it to be a skeptic.
 
-| Component | Our Choice | Why It Matters to You |
-| :--- | :--- | :--- |
-| **The Brain** | **Grok 4.1 Fast** | An adversarial model that assumes the contract is hiding something. It's skeptical by design. |
-| **The Speed** | **FastAPI + xAI** | Sub-second analysis. Because you need answers *before* you sign, not tomorrow. |
-| **The Trust** | **Opik** | We verify our results. A 93.3% accuracy rate means you can trust our "X-Ray." |
-| **The Vision** | **Hybrid OCR** | Even if it's a blurry photo of a lease, we find the precise text that puts you at risk. |
+*   **The Brain:** I'm using **Grok 4.1 Fast**. I tuned it to be paranoid—it assumes the contract is trying to screw you over, and its job is to find out how.
+*   **The Gut Check:** I used **Opik** to actually test the AI. I fed it a bunch of "Golden Traps" (real predatory clauses) to make sure it was actually catching them. It's sitting at **93.3% accuracy** right now.
+*   **Vision:** If you have a physical contract, just snap a photo. The OCR reads the text (even if the photo is a bit shaky) and analyzes it instantly.
+*   **The "Fight Back" Button:** This is my favorite part. Once it finds a bad clause, you click one button and the app writes a firm, professional email for you to send back to the company to dispute it.
 
 ---
 
-## 🏆 Proof of Performance (Verified 93.3%)
-Most AI projects "vibe check" their results. We **benchmark** ours.
-We maintain the `Golden-Traps-v2` dataset: 30 of the most dangerous predatory clauses currently used by major banks, service providers, and landlords.
+## �️ Get it running locally
 
-- **Current Accuracy:** 93.3% (28/30 traps caught)
-- **Verified by:** Opik Evaluation Suite
-- **Mission:** We won't stop until we hit 100%.
-
-> *"Opik helped us realize our AI was initially 'too nice.' We tuned it to be an aggressive consumer advocate, jumping our detection rate from 40% to 93%."*
-
----
-
-## 🛠️ Peek Under the Hood
-
-### 1. Ingestion (The Vision)
-We don't just extract text; we map it. Our engine finds the literal coordinates of dangerous clauses so we can highlight them directly on your original document.
-
-### 2. Audit (The Brain)
-Using **Grok 4.1**, we run a "Zero-Trust" audit. The AI looks for liability shifts, unilateral price hikes, and friction traps designed to keep you paying.
-
-### 3. Fight Back (The Action)
-Found a trap? One click generates a firm, legally-grounded negotiation email. We give you the script to say "No" effectively.
-
----
-
-## 🚀 Experience it Locally
-
-### 1. The Lab (Backend)
+### 1. The Backend
 ```bash
 cd backend
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-# Add your XAI_API_KEY to .env
+# Put your XAI_API_KEY in .env
 uvicorn main:app --reload --port 8005
 ```
 
-### 2. The Shield (Frontend)
+### 2. The Frontend
 ```bash
 cd frontend
 npm install && npm run dev
 ```
-Visit `http://localhost:3000` — Ready to audit. ✨
+
+Visit `http://localhost:3000` and start auditing. ✨
 
 ---
 
-*Built with passion for consumer rights at the 2026 AI Hackathon.*
+*Built for the 2026 AI Hackathon because I'm tired of bad contracts.*
+

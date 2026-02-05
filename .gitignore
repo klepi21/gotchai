@@ -33,3 +33,7 @@ backend/wandb/
 # IDEs
 .vscode/
 .idea/
+
+# Hackathon Prep
+PITCH_DECK.md
+PRESENTATION.md
